@@ -1,7 +1,10 @@
 {{#each placemarks}}
     <div class="box box-link-hover-shadow">
         <h2 class="title">
-            Name: {{name}} Longitude: {{longitude}} Latitude: {{latitude}}
+            Name: {{name}} Longitude: {{longitude}} Latitude: {{latitude}} Created by {{userid}}
         </h2>
+        <a href="/dashboard/deleteplacemark/{{_id}}" class="button">
+            <i class="fas fa-trash"></i>
+        </a>
     </div>
 {{/each}}

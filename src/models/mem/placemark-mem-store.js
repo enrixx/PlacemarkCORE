@@ -22,7 +22,12 @@ export const placemarkMemStore = {
     placemarks.splice(index, 1);
   },
 
-  async deleteAllPlaylists() {
+  async deleteAllPlacemarks() {
     placemarks = [];
   },
+
+  async getUserPlacemarks(userid) {
+    return placemarks.filter((placemark) => placemark.userid === userid);
+  },
+
 };
