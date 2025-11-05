@@ -5,7 +5,15 @@ export const dashboardController = {
   index: {
     handler: async function (request, h) {
       const loggedInUser = request.auth.credentials;
-      const placemarks = await db.placemarkStore.getUserPlacemarks(loggedInUser._id);
+      const allPlacemarks = await db.placemarkStore.getAllPlacemarks();
+      const placemarks = await Promise.all(allPlacemarks.map(async (p) => {
+        const user = await db.userStore.getUserById(p.userid);
+        return {
+          ...p,
+          isOwner: p.userid === loggedInUser._id,
+          userEmail: user.email,
+        };
+      }));
       const viewData = {
         title: "PlacemarkCore Dashboard",
         user: loggedInUser,
@@ -39,9 +47,13 @@ export const dashboardController = {
   deletePlacemark: {
     handler: async function (request, h) {
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
-      await db.placemarkStore.deletePlacemarkById(placemark._id);
+      const loggedInUser = request.auth.credentials;
+      if (placemark && placemark.userid === loggedInUser._id) {
+        await db.placemarkStore.deletePlacemarkById(placemark._id);
+      }
       return h.redirect("/dashboard");
     },
   },
 
 };
+
