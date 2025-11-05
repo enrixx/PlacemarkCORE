@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import Cookie from "@hapi/cookie";
 import * as dotenv from "dotenv";
+import Joi from "joi";
 import { webRoutes } from "./web-routes.js";
 import { db } from "./models/db.js";
 import { accountsController } from "./controllers/accounts-controller.js";
@@ -25,6 +26,7 @@ async function init() {
   });
   await server.register(Vision);
   await server.register(Cookie);
+  server.validator(Joi);
   server.auth.strategy("session", "cookie", {
     cookie: {
       name: process.env.COOKIE_NAME,
@@ -46,7 +48,7 @@ async function init() {
     layout: true,
     isCached: false,
   });
-  db.init();
+  db.init("json");
   server.route(webRoutes);
   await server.start();
   console.log("Server running on %s", server.info.uri);
