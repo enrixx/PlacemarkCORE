@@ -2,7 +2,7 @@ import { db } from "../models/db.js";
 
 export const placemarkController = {
   index: {
-    handler: async function (request, h) {
+    handler: async function(request, h) {
       const loggedInUser = request.auth.credentials;
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
       const viewData = {
@@ -15,7 +15,7 @@ export const placemarkController = {
   },
 
   showEditPage: {
-    handler: async function (request, h) {
+    handler: async function(request, h) {
       const loggedInUser = request.auth.credentials;
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
       if (placemark.userid !== loggedInUser._id) {
@@ -30,7 +30,7 @@ export const placemarkController = {
   },
 
   update: {
-    handler: async function (request, h) {
+    handler: async function(request, h) {
       const loggedInUser = request.auth.credentials;
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
       const newPlacemark = {

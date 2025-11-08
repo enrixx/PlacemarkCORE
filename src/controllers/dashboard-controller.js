@@ -3,7 +3,7 @@ import { PlacemarkSpec } from "../models/joi-schemas.js";
 
 export const dashboardController = {
   index: {
-    handler: async function (request, h) {
+    handler: async function(request, h) {
       const loggedInUser = request.auth.credentials;
       const allPlacemarks = await db.placemarkStore.getAllPlacemarks();
       const placemarks = await Promise.all(allPlacemarks.map(async (p) => {
@@ -23,7 +23,7 @@ export const dashboardController = {
     },
   },
   addPlacemarkPage: {
-    handler: function (request, h) {
+    handler: function(request, h) {
       const loggedInUser = request.auth.credentials;
       const viewData = {
         title: "Add a new Placemark",
@@ -36,7 +36,7 @@ export const dashboardController = {
     validate: {
       payload: PlacemarkSpec,
       options: { abortEarly: false },
-      failAction: async function (request, h, error) {
+      failAction: async function(request, h, error) {
         const loggedInUser = request.auth.credentials;
         const allPlacemarks = await db.placemarkStore.getAllPlacemarks();
         const placemarks = await Promise.all(
@@ -47,7 +47,7 @@ export const dashboardController = {
               isOwner: p.userid === loggedInUser._id,
               userEmail: user ? user.email : "Unknown User",
             };
-          })
+          }),
         );
         return h
           .view("add-placemark-view", {
@@ -60,7 +60,7 @@ export const dashboardController = {
           .code(400);
       },
     },
-    handler: async function (request, h) {
+    handler: async function(request, h) {
       const loggedInUser = request.auth.credentials;
       const newPlacemark = {
         name: request.payload.name,
@@ -75,7 +75,7 @@ export const dashboardController = {
   },
 
   deletePlacemark: {
-    handler: async function (request, h) {
+    handler: async function(request, h) {
       const loggedInUser = request.auth.credentials;
       const success = await db.placemarkStore.deletePlacemarkById(request.params.id, loggedInUser._id);
       if (!success) {
@@ -88,7 +88,7 @@ export const dashboardController = {
               isOwner: p.userid === loggedInUser._id,
               userEmail: user ? user.email : "Unknown User",
             };
-          })
+          }),
         );
         const viewData = {
           title: "PlacemarkCore Dashboard",
