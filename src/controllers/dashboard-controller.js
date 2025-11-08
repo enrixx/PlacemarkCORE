@@ -22,7 +22,16 @@ export const dashboardController = {
       return h.view("dashboard-view", viewData);
     },
   },
-
+  addPlacemarkPage: {
+    handler: function (request, h) {
+      const loggedInUser = request.auth.credentials;
+      const viewData = {
+        title: "Add a new Placemark",
+        user: loggedInUser,
+      };
+      return h.view("add-placemark-view", viewData);
+    },
+  },
   addPlacemark: {
     validate: {
       payload: PlacemarkSpec,
@@ -41,7 +50,7 @@ export const dashboardController = {
           })
         );
         return h
-          .view("dashboard-view", {
+          .view("add-placemark-view", {
             title: "Add Placemark error",
             user: loggedInUser,
             placemarks: placemarks,

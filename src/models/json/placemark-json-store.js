@@ -43,4 +43,17 @@ export const placemarkJsonStore = {
     db.data.placemarks = [];
     await db.write();
   },
+
+  async updatePlacemark(placemarkId, userId, updatedPlacemark) {
+    await db.read();
+    const placemark = db.data.placemarks.find((p) => p._id === placemarkId && p.userid === userId);
+    if (placemark) {
+      placemark.name = updatedPlacemark.name;
+      placemark.category = updatedPlacemark.category;
+      placemark.description = updatedPlacemark.description;
+      placemark.latitude = updatedPlacemark.latitude;
+      placemark.longitude = updatedPlacemark.longitude;
+      await db.write();
+    }
+  },
 };
