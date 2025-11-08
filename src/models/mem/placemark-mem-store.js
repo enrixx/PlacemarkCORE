@@ -7,19 +7,26 @@ export const placemarkMemStore = {
     return placemarks;
   },
 
-  async addPlacemark(placemark) {
+  async addPlacemark(userid, placemark) {
     placemark._id = v4();
+    placemark.userid = userid;
     placemarks.push(placemark);
     return placemark;
   },
 
   async getPlacemarkById(id) {
-    return placemarks.find((placemark) => placemark._id === id);
+    let p = placemarks.find((placemark) => placemark._id === id);
+    if (p === undefined) p = null;
+    return p
   },
 
-  async deletePlacemarkById(id) {
-    const index = placemarks.findIndex((placemark) => placemark._id === id);
+  async deletePlacemarkById(id, userId) {
+    const index = placemarks.findIndex((placemark) => placemark._id === id && placemark.userid === userId);
+    if (index === -1) {
+      return false;
+    }
     placemarks.splice(index, 1);
+    return true;
   },
 
   async deleteAllPlacemarks() {
