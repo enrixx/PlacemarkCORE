@@ -1,0 +1,19 @@
+{{> menu}}
+<section class="section">
+<div class="box box-link-hover-shadow">
+    <h1 class="title is-4">
+        <strong> Placemark Name: {{placemark.name}} </strong>
+    </h1>
+    <div class="content">
+        <p><strong>Category:</strong> {{placemark.category}}</p>
+        <p><strong>Description:</strong> {{placemark.description}}</p>
+        <p><strong>Latitude:</strong> {{placemark.latitude}}</p>
+        <p><strong>Longitude:</strong> {{placemark.longitude}}</p>
+    </div>
+    {{#if (isOwner placemark.userid user._id)}}
+    <a href="/placemark/edit/{{placemark._id}}" class="button">
+        <i class="fas fa-edit"></i>
+    </a>
+    {{/if}}
+</div>
+</section>
