@@ -1,4 +1,5 @@
 import { db } from "../models/db.js";
+import { imageStore } from "../models/image-store.js";
 import { PlacemarkSpec } from "../models/joi-schemas.js";
 
 export const dashboardController = {
@@ -7,6 +8,21 @@ export const dashboardController = {
       const loggedInUser = request.auth.credentials;
       const allPlacemarks = await db.placemarkStore.getAllPlacemarks();
       const placemarks = await Promise.all(allPlacemarks.map(async (p) => {
+
+        //ToDo: Remove console.error
+        if (p.imgPublicId) {
+          p.img = imageStore.getSignedUrl(p.imgPublicId);
+        } else if (p.img) {
+          const extractedPublicId = imageStore.extractPublicId(p.img);
+          if (extractedPublicId) {
+            p.img = imageStore.getSignedUrl(extractedPublicId);
+            p.imgPublicId = extractedPublicId;
+            db.placemarkStore.updatePlacemark(p._id, p.userid, p).catch(err =>
+              console.error("Error updating placemark:", err)
+            );
+          }
+        }
+
         const user = await db.userStore.getUserById(p.userid);
         return {
           ...p,

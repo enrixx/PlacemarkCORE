@@ -1,19 +1,52 @@
 {{> menu}}
 <section class="section">
-<div class="box box-link-hover-shadow">
-    <h1 class="title is-4">
+<div class="columns">
+  <div class="column">
+    <div class="box box-link-hover-shadow">
+      <h1 class="title is-4">
         <strong> Placemark Name: {{placemark.name}} </strong>
-    </h1>
-    <div class="content">
+      </h1>
+      <div class="content">
         <p><strong>Category:</strong> {{placemark.category}}</p>
         <p><strong>Description:</strong> {{placemark.description}}</p>
         <p><strong>Latitude:</strong> {{placemark.latitude}}</p>
         <p><strong>Longitude:</strong> {{placemark.longitude}}</p>
+      </div>
+      {{#if (isOwner placemark.userid user._id)}}
+        <a href="/placemark/edit/{{placemark._id}}" class="button">
+          <i class="fas fa-edit"></i>
+        </a>
+      {{/if}}
     </div>
-    {{#if (isOwner placemark.userid user._id)}}
-    <a href="/placemark/edit/{{placemark._id}}" class="button">
-        <i class="fas fa-edit"></i>
-    </a>
-    {{/if}}
+  </div>
+  <div class="column">
+    <div class="box">
+      <h1 class="title is-4">Image</h1>
+      {{#if placemark.img}}
+        <img src="{{placemark.img}}" alt="Placemark Image">
+      {{/if}}
+      {{#if (isOwner placemark.userid user._id)}}
+        <form action="/placemark/{{placemark._id}}/uploadimage" method="POST" enctype="multipart/form-data">
+          <div id="file-select" class="file has-name is-fullwidth">
+            <label class="file-label">
+              <input class="file-input" type="file" name="imagefile" accept="image/png, image/jpeg">
+              <span class="file-cta">
+                <span class="file-icon">
+                  <i class="fas fa-upload"></i>
+                </span>
+                <span class="file-label">
+                  Choose a file…
+                </span>
+              </span>
+              <span class="file-name">
+                ...
+              </span>
+            </label>
+          </div>
+          <button type="submit" class="button is-info mt-2">Upload</button>
+        </form>
+      {{/if}}
+    </div>
+  </div>
 </div>
 </section>
