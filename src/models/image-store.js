@@ -66,17 +66,13 @@ export const imageStore = {
     }
   },
 
-  deleteImage: async function (img) {
-    const urlParts = img.split("/");
-    const uploadIndex = urlParts.indexOf("upload");
-    if (uploadIndex !== -1 && uploadIndex < urlParts.length - 1) {
-      const pathAfterVersion = urlParts.slice(uploadIndex + 2).join("/");
-      const publicId = pathAfterVersion.replace(/\.[^/.]+$/, "");
-      await cloudinary.uploader.destroy(publicId, {
-        type: "private",
-        invalidate: true,
-      });
-    }
+  deleteImage: async function (publicId) {
+
+    await cloudinary.uploader.destroy(publicId, {
+      type: "private",
+      invalidate: true,
+    });
   },
 };
+
 

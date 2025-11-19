@@ -86,5 +86,31 @@ export const placemarkController = {
       parse: true,
     },
   },
+
+  deleteImage: {
+    handler: async function (request, h) {
+      try {
+        const loggedInUser = request.auth.credentials;
+        const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
+
+        if (placemark.userid !== loggedInUser._id) {
+          return h.redirect("/dashboard");
+        }
+
+        if (placemark.imgPublicId) {
+          await imageStore.deleteImage(placemark.imgPublicId);
+        }
+
+        placemark.img = null;
+        placemark.imgPublicId = null;
+        await db.placemarkStore.updatePlacemark(placemark._id, loggedInUser._id, placemark);
+
+        return h.redirect(`/placemark/${placemark._id}`);
+      } catch (err) {
+        console.error("Error deleting image:", err);
+        return h.redirect("/dashboard");
+      }
+    },
+  },
 };
 

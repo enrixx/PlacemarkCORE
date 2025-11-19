@@ -53,7 +53,8 @@ export const placemarkJsonStore = {
       placemark.description = updatedPlacemark.description;
       placemark.latitude = updatedPlacemark.latitude;
       placemark.longitude = updatedPlacemark.longitude;
-      placemark.img = updatedPlacemark.img; // Add this line
+      placemark.img = updatedPlacemark.img;
+      placemark.imgPublicId = updatedPlacemark.imgPublicId;
       await db.write();
     }
   },
