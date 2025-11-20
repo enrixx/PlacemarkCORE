@@ -12,6 +12,10 @@ cloudinary.config({
 
 export const imageStore = {
   uploadImage: async function (imagefile) {
+    const publicDir = "./public";
+    if (!existsSync(publicDir)) {
+      mkdirSync(publicDir, { recursive: true });
+    }
     const tempPath = `./public/temp-${Date.now()}.img`;
     writeFileSync(tempPath, imagefile);
     const response = await cloudinary.uploader.upload(tempPath, {
