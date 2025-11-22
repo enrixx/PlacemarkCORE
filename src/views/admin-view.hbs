@@ -1,20 +1,20 @@
 {{> menu active="admin"}}
 <section class="section">
-  <div class="container">
-    <div class="columns">
-      <div class="column is-3">
-        {{> admin-sidebar}}
-      </div>
-      <div class="column is-9">
-        <h1 class="title">{{title}}</h1>
-        <div class="box">
-          <p>Welcome, {{user.firstName}} {{user.lastName}} ({{user.email}})</p>
-          <ul>
-            <li>Total users: {{userCount}}</li>
-            <li>Total placemarks: {{placemarkCount}}</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="container">
+		<div class="columns">
+			<div class="column is-3">
+				{{> admin-sidebar}}
+			</div>
+			<div class="column is-9">
+				<h1 class="title">{{title}}</h1>
+				<div class="box">
+					<p>Welcome, {{user.firstName}} {{user.lastName}} ({{user.email}})</p>
+					<ul>
+						<li>Total users: {{userCount}}</li>
+						<li>Total placemarks: {{placemarkCount}}</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
 </section>
