@@ -29,6 +29,15 @@ export const placemarkMemStore = {
     return true;
   },
 
+  async deleteAnyPlacemark(id) {
+    const index = placemarks.findIndex((placemark) => placemark._id === id);
+    if (index === -1) {
+      return false;
+    }
+    placemarks.splice(index, 1);
+    return true;
+  },
+
   async deleteAllPlacemarks() {
     placemarks = [];
   },
