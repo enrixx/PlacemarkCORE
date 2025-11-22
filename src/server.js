@@ -9,7 +9,7 @@ import Joi from "joi";
 import Inert from "@hapi/inert";
 import { webRoutes } from "./web-routes.js";
 import { db } from "./models/db.js";
-import { accountsController } from "./controllers/accounts-controller.js";
+import { accountController } from "./controllers/account-controller.js";
 import { handlebarsHelpers } from "./utils/helpers.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,7 +33,7 @@ async function init() {
       isSecure: false,
     },
     redirectTo: "/",
-    validate: accountsController.validate,
+    validate: accountController.validate,
   });
   server.auth.default("session");
   server.views({

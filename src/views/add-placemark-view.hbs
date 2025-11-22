@@ -1,15 +1,31 @@
 {{> menu active="dashboard"}}
 <section class="section">
-  <div class="title is-3">Add a new Placemark</div>
-  <form action="/dashboard/addplacemark" method="POST">
-    <div class="field">
-      <label class="label">Placemark name</label> <input class="input" type="text" placeholder="Enter placemark name" name="name">
-      <label class="label">Category</label> <input class="input" type="text" placeholder="Enter placemark category" name="category">
-      <label class="label">Description</label> <input class="input" type="text" placeholder="Enter placemark description" name="description">
-      <label class="label">Longitude</label> <input class="input" type="text" placeholder="Enter Longitude" name="longitude">
-      <label class="label">Latitude</label> <input class="input" type="text" placeholder="Enter Latitude" name="latitude">
-    </div>
-    <button class="button is-link">Add placemark</button>
-  </form>
+	<div class="title is-3">Add a new Placemark</div>
+	<form action="/dashboard/addplacemark" method="POST">
+		<div class="field">
+			<label class="label">Placemark name</label>
+			<input class="input" type="text"
+						 value="{{placemark.name}}"
+						 name="name">
+			<label class="label">Category</label>
+			<div class="control">
+				<div class="select">
+					<select id="category-select" name="category">
+						<option value="">Select a category</option>
+						{{#each categories}}
+							<option value="{{_id}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+						{{/each}}
+					</select>
+				</div>
+			</div>
+			<label class="label">Description</label>
+			<input class="input" type="text" value="{{placemark.description}}"
+						 name="description">
+			<label class="label">Longitude</label>
+			<input class="input" type="text" value="{{placemark.longitude}}" name="longitude">
+			<label class="label">Latitude</label>
+			<input class="input" type="text" value="{{placemark.latitude}}" name="latitude">
+		</div>
+		<button class="button is-link">Add placemark</button>
+	</form>
 </section>
-

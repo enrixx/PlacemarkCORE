@@ -6,6 +6,8 @@ export const placemarkController = {
     handler: async function (request, h) {
       const loggedInUser = request.auth.credentials;
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
+      const categories = await db.categoryStore.getAllCategories();
+      const idToName = new Map((categories || []).map((c) => [c._id, c.name || ""]));
 
       if (placemark.imgPublicId) {
         placemark.img = imageStore.getSignedUrl(placemark.imgPublicId);
@@ -18,10 +20,12 @@ export const placemarkController = {
         }
       }
 
+      placemark.categoryName = idToName.get(placemark.categoryId) || "";
       const viewData = {
         title: "Placemark",
         placemark: placemark,
         user: loggedInUser,
+        categories: categories,
       };
       return h.view("placemark-view", viewData);
     },
@@ -31,12 +35,17 @@ export const placemarkController = {
     handler: async function (request, h) {
       const loggedInUser = request.auth.credentials;
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
+      const categoriesRaw = await db.categoryStore.getAllCategories();
+      const categories = (categoriesRaw || []).map((c) => ({ ...c, selected: c._id === placemark.categoryId }));
+      const idToName = new Map((categories || []).map((c) => [c._id, c.name || ""]));
+      placemark.categoryName = idToName.get(placemark.categoryId) || "";
       if (placemark.userid !== loggedInUser._id) {
         return h.redirect("/dashboard");
       }
       const viewData = {
         title: "Edit Placemark",
         placemark: placemark,
+        categories: categories,
       };
       return h.view("edit-placemark-view", viewData);
     },
@@ -46,9 +55,12 @@ export const placemarkController = {
     handler: async function (request, h) {
       const loggedInUser = request.auth.credentials;
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
+
+      const categoryId = request.payload.category;
+
       const newPlacemark = {
         name: request.payload.name,
-        category: request.payload.category,
+        categoryId: categoryId,
         description: request.payload.description,
         longitude: Number(request.payload.longitude),
         latitude: Number(request.payload.latitude),
@@ -113,4 +125,3 @@ export const placemarkController = {
     },
   },
 };
-

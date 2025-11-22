@@ -1,60 +1,66 @@
 {{> menu active="admin"}}
 <section class="section">
-  <div class="container">
-    <h1 class="title">{{title}}</h1>
-    {{#if errors}}
-      <div class="notification is-danger">
-        <ul>
-          {{#each errors}}
-            <li>{{this.message}}</li>
-          {{/each}}
-        </ul>
-      </div>
-    {{/if}}
+	<div class="container">
+		<h1 class="title">{{title}}</h1>
+		{{#if errors}}
+			<div class="notification is-danger">
+				<ul>
+					{{#each errors}}
+						<li>{{this.message}}</li>
+					{{/each}}
+				</ul>
+			</div>
+		{{/if}}
 
-    <form method="post" action="{{#if editUser}}/admin/users/{{editUser._id}}{{else}}/admin/users{{/if}}">
-      <div class="field">
-        <label class="label">First name</label>
-        <div class="control">
-          <input class="input" name="firstName" type="text" value="{{#if editUser}}{{editUser.firstName}}{{/if}}" required>
-        </div>
-      </div>
-      <div class="field">
-        <label class="label">Last name</label>
-        <div class="control">
-          <input class="input" name="lastName" type="text" value="{{#if editUser}}{{editUser.lastName}}{{/if}}" required>
-        </div>
-      </div>
-      <div class="field">
-        <label class="label">Email</label>
-        <div class="control">
-          <input class="input" name="email" type="email" value="{{#if editUser}}{{editUser.email}}{{/if}}" required>
-        </div>
-      </div>
-      <div class="field">
-        <label class="label">Password</label>
-        <div class="control">
-          <input class="input" name="password" type="password" value="" {{#unless editUser}}required{{/unless}}>
-        </div>
-      </div>
-      <div class="field">
-        <label class="label">Role</label>
-        <div class="control">
-          <div class="select">
-            <select name="role">
-              <option value="user" {{#if editUser}}{{#ifEquals editUser.role "user"}}selected{{/ifEquals}}{{/if}}>User</option>
-              <option value="admin" {{#if editUser}}{{#ifEquals editUser.role "admin"}}selected{{/ifEquals}}{{/if}}>Admin</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <button class="button is-primary" type="submit">Save</button>
-        </div>
-      </div>
-    </form>
+		<form method="post" action="{{#if editUser}}/admin/users/{{editUser._id}}{{else}}/admin/users{{/if}}">
+			<div class="field">
+				<label class="label">First name</label>
+				<div class="control">
+					<input class="input" name="firstName" type="text" value="{{#if editUser}}{{editUser.firstName}}{{/if}}"
+								 required>
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">Last name</label>
+				<div class="control">
+					<input class="input" name="lastName" type="text" value="{{#if editUser}}{{editUser.lastName}}{{/if}}"
+								 required>
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">Email</label>
+				<div class="control">
+					<input class="input" name="email" type="email" value="{{#if editUser}}{{editUser.email}}{{/if}}" required>
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">Password</label>
+				<div class="control">
+					<input class="input" name="password" type="password" value="" {{#unless editUser}}required{{/unless}}>
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">Role</label>
+				<div class="control">
+					<div class="select">
+						<select name="role">
+							<option value="user" {{#if editUser}}{{#ifEquals editUser.role "user"}}selected{{/ifEquals}}{{/if}}>
+								User
+							</option>
+							<option value="admin" {{#if editUser}}{{#ifEquals editUser.role "admin"}}selected{{/ifEquals}}{{/if}}>
+								Admin
+							</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="field">
+				<div class="control">
+					<button class="button is-primary" type="submit">Save</button>
+				</div>
+			</div>
+		</form>
 
-  </div>
+	</div>
 </section>
 
