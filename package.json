@@ -17,6 +17,7 @@
   "scripts": {
     "dev": "./node_modules/.bin/nodemon  src/server.js",
     "start": "node src/server.js",
+    "debug": "node --inspect src/server.js",
     "lint": "./node_modules/.bin/eslint . --ext .js",
     "test": "./node_modules/mocha/bin/_mocha --ui tdd test/**.js -exit"
   },

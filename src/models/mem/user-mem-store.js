@@ -1,5 +1,4 @@
 import { v4 } from "uuid";
-import { db } from "../json/store-utils.js";
 
 let users = [];
 
@@ -34,4 +33,19 @@ export const userMemStore = {
   async deleteAll() {
     users = [];
   },
+
+  async updateUser(userId, updatedUser) {
+    const user = users.find((u) => u._id === userId);
+    if (user) {
+      user.firstName = updatedUser.firstName;
+      user.lastName = updatedUser.lastName;
+      user.email = updatedUser.email;
+      user.password = updatedUser.password;
+      user.role = updatedUser.role;
+    }
+  },
+
+  async getAdminCount() {
+    return users.filter(user => user.role === "admin").length;
+  }
 };
