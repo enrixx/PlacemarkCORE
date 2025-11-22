@@ -1,0 +1,39 @@
+{{> menu active="admin"}}
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-3">
+                {{> admin-sidebar}}
+            </div>
+            <div class="column is-9">
+                <h1 class="title">{{title}}</h1>
+                <div class="box">
+                    <table class="table is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Owner</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#each placemarks}}
+                            <tr>
+                                <td>{{this.name}}</td>
+                                <td>{{this.category}}</td>
+                                <td>{{this.userEmail}}</td>
+                                <td>
+                                    <a class="button is-small" href="/placemark/{{this._id}}">View</a>
+                                    <a class="button is-small is-danger" href="/admin/placemark/{{this._id}}/delete">Delete</a>
+                                </td>
+                            </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

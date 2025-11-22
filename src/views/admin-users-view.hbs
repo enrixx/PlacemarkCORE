@@ -1,0 +1,51 @@
+{{> menu active="admin"}}
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-3">
+                {{> admin-sidebar}}
+            </div>
+            <div class="column is-9">
+                <h1 class="title">{{title}}</h1>
+                {{#if errors}}
+                    <div class="notification is-danger">
+                        <ul>
+                            {{#each errors}}
+                                <li>{{this.message}}</li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                {{/if}}
+                <div class="box">
+                    <table class="table is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#each users}}
+                            <tr>
+                                <td>{{this.firstName}} {{this.lastName}}</td>
+                                <td>{{this.email}}</td>
+                                <td>{{this.role}}</td>
+                                <td>
+                                    <a class="button is-small" href="/admin/users/{{this._id}}/edit">Edit</a>
+                                    <a class="button is-small is-danger" href="/admin/users/{{this._id}}/delete">Delete</a>
+                                </td>
+                            </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
+                    <div class="mt-4">
+                        <a class="button is-primary" href="/admin/users/new">Create new user</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

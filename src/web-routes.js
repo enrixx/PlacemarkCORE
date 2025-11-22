@@ -3,6 +3,8 @@ import { fileURLToPath } from "url";
 import { accountsController } from "./controllers/accounts-controller.js";
 import { dashboardController } from "./controllers/dashboard-controller.js";
 import { placemarkController } from "./controllers/placemark-controller.js";
+import { adminMiddleware } from "./utils/admin-middleware.js";
+import { adminController } from "./controllers/admin-controller.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,14 +28,14 @@ export const webRoutes = [
   { method: "POST", path: "/placemark/{id}/uploadimage", config: placemarkController.uploadImage },
   { method: "GET", path: "/placemark/{id}/deleteimage", config: placemarkController.deleteImage },
 
-  {
-    method: "GET",
-    path: "/js/ui-utils.js",
-    handler: {
-      file: {
-        path: path.join(__dirname, "utils/ui-utils.js"),
-      },
-    },
-    options: { auth: false },
-  },
+  { method: "GET", path: "/admin", config: { pre: [{ method: adminMiddleware.requireAdmin }], handler: adminController.index.handler } },
+  { method: "GET", path: "/admin/users", config: { pre: [{ method: adminMiddleware.requireAdmin }], handler: adminController.usersList.handler } },
+  { method: "GET", path: "/admin/users/new", config: { pre: [{ method: adminMiddleware.requireAdmin }], handler: adminController.showCreateUser.handler } },
+  { method: "POST", path: "/admin/users", config: { pre: [{ method: adminMiddleware.requireAdmin }], ...adminController.createUser } },
+  { method: "GET", path: "/admin/users/{id}/edit", config: { pre: [{ method: adminMiddleware.requireAdmin }], handler: adminController.showEditUser.handler } },
+  { method: "POST", path: "/admin/users/{id}", config: { pre: [{ method: adminMiddleware.requireAdmin }], handler: adminController.updateUser.handler } },
+  { method: "GET", path: "/admin/users/{id}/delete", config: { pre: [{ method: adminMiddleware.requireAdmin }], handler: adminController.deleteUser.handler } },
+
+  { method: "GET", path: "/admin/placemarks", config: { pre: [{ method: adminMiddleware.requireAdmin }], handler: adminController.placemarksList.handler } },
+  { method: "GET", path: "/admin/placemark/{id}/delete", config: { pre: [{ method: adminMiddleware.requireAdmin }], handler: adminController.deletePlacemark.handler } },
 ];
