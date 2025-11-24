@@ -1,16 +1,16 @@
 import { db } from "../models/db.js";
 import { UserCredentialsSpec, UserSpec } from "../models/joi-schemas.js";
 
-export const accountsController = {
+export const accountController = {
   index: {
     auth: false,
-    handler: function(request, h) {
+    handler: function (request, h) {
       return h.view("main", { title: "Welcome to PlacemarkCORE" });
     },
   },
   showSignup: {
     auth: false,
-    handler: function(request, h) {
+    handler: function (request, h) {
       return h.view("signup-view", { title: "Sign up for PlacemarkCore" });
     },
   },
@@ -19,15 +19,21 @@ export const accountsController = {
     validate: {
       payload: UserSpec,
       options: { abortEarly: false },
-      failAction: function(request, h, error) {
+      failAction: function (request, h, error) {
         return h.view("signup-view", { title: "Sign up error", errors: error.details }).takeover().code(400);
       },
     },
-    handler: async function(request, h) {
+    handler: async function (request, h) {
       const user = request.payload;
       const existingUser = await db.userStore.getUserByEmail(user.email);
       if (existingUser) {
-        return h.view("signup-view", { title: "Sign up error", errors: [{ message: "Email already registered" }] }).takeover().code(400);
+        return h
+          .view("signup-view", {
+            title: "Sign up error",
+            errors: [{ message: "Email already registered" }],
+          })
+          .takeover()
+          .code(400);
       }
       await db.userStore.addUser(user);
       return h.redirect("/");
@@ -35,7 +41,7 @@ export const accountsController = {
   },
   showLogin: {
     auth: false,
-    handler: function(request, h) {
+    handler: function (request, h) {
       return h.view("login-view", { title: "Login to PlacemarkCore" });
     },
   },
@@ -44,11 +50,11 @@ export const accountsController = {
     validate: {
       payload: UserCredentialsSpec,
       options: { abortEarly: false },
-      failAction: function(request, h, error) {
+      failAction: function (request, h, error) {
         return h.view("login-view", { title: "Log in error", errors: error.details }).takeover().code(400);
       },
     },
-    handler: async function(request, h) {
+    handler: async function (request, h) {
       const { email, password } = request.payload;
       const user = await db.userStore.getUserByEmail(email);
       if (!user || user.password !== password) {
@@ -60,7 +66,7 @@ export const accountsController = {
   },
   logout: {
     auth: false,
-    handler: function(request, h) {
+    handler: function (request, h) {
       request.cookieAuth.clear();
       return h.redirect("/");
     },

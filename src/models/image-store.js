@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import { writeFileSync, unlinkSync } from "fs";
+import { writeFileSync, unlinkSync, existsSync, mkdirSync } from "fs";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -48,7 +48,7 @@ export const imageStore = {
   extractPublicId: function (url) {
     try {
       const urlParts = url.split("/");
-      const privateIndex = urlParts.findIndex(part => part === "private");
+      const privateIndex = urlParts.findIndex((part) => part === "private");
 
       if (privateIndex !== -1) {
         let startIndex = privateIndex + 2;
@@ -71,12 +71,9 @@ export const imageStore = {
   },
 
   deleteImage: async function (publicId) {
-
     await cloudinary.uploader.destroy(publicId, {
       type: "private",
       invalidate: true,
     });
   },
 };
-
-

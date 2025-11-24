@@ -60,7 +60,7 @@ export const placemarkJsonStore = {
     const placemark = db.data.placemarks.find((p) => p._id === placemarkId && p.userid === userId);
     if (placemark) {
       placemark.name = updatedPlacemark.name;
-      placemark.category = updatedPlacemark.category;
+      placemark.categoryId = updatedPlacemark.categoryId;
       placemark.description = updatedPlacemark.description;
       placemark.latitude = updatedPlacemark.latitude;
       placemark.longitude = updatedPlacemark.longitude;
@@ -68,5 +68,12 @@ export const placemarkJsonStore = {
       placemark.imgPublicId = updatedPlacemark.imgPublicId;
       await db.write();
     }
+  },
+
+  async getPlacemarksByCategory(categoryId) {
+    if (!categoryId) return [];
+    await db.read();
+    const placemarks = db.data?.placemarks || [];
+    return placemarks.filter(p => (p.categoryId || "") === categoryId);
   },
 };
