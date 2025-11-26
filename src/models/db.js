@@ -5,7 +5,10 @@ import { placemarkJsonStore } from "./json/placemark-json-store.js";
 import { seedAdmin } from "./seed-admin.js";
 import { categoryJsonStore } from "./json/category-json-store.js";
 import { categoryMemStore } from "./mem/category-mem-store.js";
-
+import { userMongoStore } from "./mongo/user-mongo-store.js";
+import { placemarkMongoStore } from "./mongo/placemark-mongo-store.js";
+import { categoryMongoStore } from "./mongo/category-mongo-store.js";
+import { connectMongo } from "./mongo/connect.js";
 
 export const db = {
   userStore: null,
@@ -25,6 +28,13 @@ export const db = {
         this.placemarkStore = placemarkJsonStore;
         this.categoryStore = categoryJsonStore;
         await seedAdmin("json");
+        break;
+      case "mongo":
+        this.userStore = userMongoStore;
+        this.placemarkStore = placemarkMongoStore;
+        this.categoryStore = categoryMongoStore;
+        connectMongo();
+        await seedAdmin("mongo");
         break;
       default:
         this.userStore = userMemStore;

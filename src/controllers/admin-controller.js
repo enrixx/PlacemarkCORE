@@ -87,6 +87,10 @@ export const adminController = {
           .takeover();
       }
 
+      if (payload.password === "" || payload.password === undefined) {
+        delete payload.password;
+      }
+
       await db.userStore.updateUser(id, payload);
       return h.redirect("/admin/users");
     },

@@ -52,13 +52,13 @@ export const placemarkMemStore = {
     placemarks = [];
   },
 
-  async getUserPlacemarks(userid) {
+  async getPlacemarksByUserId(userid) {
     return placemarks.filter((placemark) => placemark.userid === userid);
   },
 
   async updatePlacemark(placemarkId, userId, updatedPlacemark) {
     const placemark = placemarks.find((p) => p._id === placemarkId && p.userid === userId);
-    if (!placemark) throw new Error("Placemark not found");
+    if (!placemark) return false;
     normalizeImages(updatedPlacemark);
     if (placemark) {
       placemark.name = updatedPlacemark.name;
@@ -69,9 +69,10 @@ export const placemarkMemStore = {
       placemark.img = updatedPlacemark.img;
       placemark.imgPublicId = updatedPlacemark.imgPublicId;
     }
+    return true;
   },
 
-  async getPlacemarksByCategory(categoryId) {
+  async getPlacemarksByCategoryId(categoryId) {
     if (!categoryId) return [];
     return placemarks.filter((p) => (p.categoryId || "") === categoryId);
   },

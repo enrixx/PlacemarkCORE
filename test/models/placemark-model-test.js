@@ -27,7 +27,7 @@ suite("Placemark Model tests", () => {
 
   test("create a placemark", async () => {
     const newPlacemark = await db.placemarkStore.addPlacemark(user._id, eiffelTower);
-    assert.equal(newPlacemark, eiffelTower);
+    assert.isDefined(newPlacemark._id);
   });
 
   test("delete all placemarks", async () => {
@@ -77,37 +77,41 @@ suite("Placemark Model tests", () => {
     const categorySightseeingDb = await db.categoryStore.addCategory(categorySightseeing);
     const eiffelTowerWithCategory = { ...eiffelTower, categoryId: categorySightseeingDb._id };
     const eiffelTowerDb = await db.placemarkStore.addPlacemark(user._id, eiffelTowerWithCategory);
-    const returnedPlacemarks = await db.placemarkStore.getPlacemarksByCategory(categorySightseeingDb._id);
+    const returnedPlacemarks = await db.placemarkStore.getPlacemarksByCategoryId(categorySightseeingDb._id);
     assert.isArray(returnedPlacemarks);
     assert.lengthOf(returnedPlacemarks, 1);
     assert.deepEqual(returnedPlacemarks[0], eiffelTowerDb);
   });
 
   test("get placemarks by categoryId - no results", async () => {
-    const returnedPlacemarks = await db.placemarkStore.getPlacemarksByCategory("test-category-id");
+    const returnedPlacemarks = await db.placemarkStore.getPlacemarksByCategoryId("test-category-id");
     assert.isArray(returnedPlacemarks);
     assert.lengthOf(returnedPlacemarks, 0);
   });
 
   test("get placemarks by userId", async () => {
-    const placemarks = await db.placemarkStore.getUserPlacemarks(user._id);
+    const placemarks = await db.placemarkStore.getPlacemarksByUserId(user._id);
     assert.equal(placemarks.length, testPlacemarks.length);
     for (let i = 0; i < placemarks.length; i += 1) {
-      assert.equal(placemarks[i].userid, user._id);
+      assert.equal(placemarks[i].userid.toString(), user._id.toString());
     }
   });
 
   test("get placemarks by userId - no results", async () => {
     const user2 = await db.userStore.addUser(testUsers[1]);
-    const placemarks = await db.placemarkStore.getUserPlacemarks(user2._id);
+    const placemarks = await db.placemarkStore.getPlacemarksByUserId(user2._id);
     assert.equal(placemarks.length, 0);
   });
 
   test("Update placemark", async () => {
-    const placemark = await db.placemarkStore.addPlacemark(user._id, eiffelTower);
+    const categorySightseeingDb = await db.categoryStore.addCategory(categorySightseeing);
+    const eiffelTowerWithCategory = { ...eiffelTower, categoryId: categorySightseeingDb._id };
+    const placemark = await db.placemarkStore.addPlacemark(user._id, eiffelTowerWithCategory);
+    console.log(placemark);
     const updatedPlacemark = { ...placemark, name: "Updated Eiffel Tower" };
     await db.placemarkStore.updatePlacemark(placemark._id, user._id, updatedPlacemark);
     const returnedPlacemark = await db.placemarkStore.getPlacemarkById(placemark._id);
+    console.log(returnedPlacemark);
     assert.deepEqual(returnedPlacemark.name, updatedPlacemark.name);
     assert.deepEqual(returnedPlacemark, updatedPlacemark);
   });
@@ -115,18 +119,14 @@ suite("Placemark Model tests", () => {
   test("Update placemark - fail", async () => {
     const placemark = await db.placemarkStore.addPlacemark(user._id, eiffelTower);
     const updatedPlacemark = { ...placemark, name: "Updated Eiffel Tower" };
-    try {
-      await db.placemarkStore.updatePlacemark("bad-id", user._id, updatedPlacemark);
-      assert.fail("Expected updatePlacemark to throw for a bad id");
-    } catch (err) {
-      assert.equal(err.message, "Placemark not found");
-    }
+    const bool = await db.placemarkStore.updatePlacemark("bad-id", user._id, updatedPlacemark);
+    assert.isFalse(bool);
     const returnedPlacemark = await db.placemarkStore.getPlacemarkById(placemark._id);
     assert.deepEqual(returnedPlacemark, placemark);
   });
 
   suiteTeardown(async () => {
-    db.init("json");
+    await db.init(storeType);
     await db.placemarkStore.deleteAllPlacemarks();
     await db.userStore.deleteAll();
     await db.categoryStore.deleteAllCategories();

@@ -33,7 +33,7 @@ export const placemarkJsonStore = {
     return list;
   },
 
-  async getUserPlacemarks(userid) {
+  async getPlacemarksByUserId(userid) {
     await db.read();
     return db.data.placemarks.filter((placemark) => placemark.userid === userid);
   },
@@ -68,7 +68,7 @@ export const placemarkJsonStore = {
   async updatePlacemark(placemarkId, userId, updatedPlacemark) {
     await db.read();
     const placemark = db.data.placemarks.find((p) => p._id === placemarkId && p.userid === userId);
-    if (!placemark) throw new Error("Placemark not found");
+    if (!placemark) return false;
     normalizeImages(updatedPlacemark);
     if (placemark) {
       placemark.name = updatedPlacemark.name;
@@ -80,9 +80,10 @@ export const placemarkJsonStore = {
       placemark.imgPublicId = updatedPlacemark.imgPublicId;
       await db.write();
     }
+    return true;
   },
 
-  async getPlacemarksByCategory(categoryId) {
+  async getPlacemarksByCategoryId(categoryId) {
     if (!categoryId) return [];
     await db.read();
     const placemarks = db.data?.placemarks || [];

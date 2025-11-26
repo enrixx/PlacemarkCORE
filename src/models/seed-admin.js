@@ -3,12 +3,23 @@ import dotenv from "dotenv";
 import { db } from "./json/store-utils.js";
 import { userJsonStore } from "./json/user-json-store.js";
 import { userMemStore } from "./mem/user-mem-store.js";
+import { userMongoStore } from "./mongo/user-mongo-store.js";
 
 dotenv.config();
 const email = process.env.ADMIN_EMAIL;
 const password = process.env.ADMIN_PASSWORD;
 const firstName = process.env.ADMIN_FIRSTNAME;
 const lastName = process.env.ADMIN_LASTNAME;
+
+async function seedAdminMongo(admin) {
+  const existing = await userMongoStore.getUserByEmail(email);
+  if (existing) {
+    console.log("Admin user already exists:", email);
+    return;
+  }
+  await userMongoStore.addUser(admin);
+  console.log("Seeded admin user:", email);
+}
 
 async function seedAdminJson(admin) {
   await db.read();
@@ -33,12 +44,13 @@ async function seedAdminMem(admin) {
 }
 
 export async function seedAdmin(storeType) {
-  const admin = { _id: v4(), firstName, lastName, email, password, role: "admin" };
+  const admin = { firstName, lastName, email, password, role: "admin" };
+
   if (storeType === "json") {
-    await seedAdminJson(admin);
+    await seedAdminJson({ ...admin, _id: v4() });
   } else if (storeType === "mongo") {
-    // MongoDB seeding logic would go here
+    await seedAdminMongo(admin);
   } else {
-    await seedAdminMem(admin);
+    await seedAdminMem({ ...admin, _id: v4() });
   }
 }

@@ -10,7 +10,7 @@ suite("Category Model tests", () => {
   console.log(`Running tests with ${storeType} store`);
 
   setup(async () => {
-    db.init(storeType);
+    await db.init(storeType);
     await db.userStore.deleteAll();
     await db.placemarkStore.deleteAllPlacemarks();
     await db.categoryStore.deleteAllCategories();
@@ -44,10 +44,11 @@ suite("Category Model tests", () => {
 
   test("delete a category", async () => {
     const allCategories = await db.categoryStore.getAllCategories();
-    assert.equal(allCategories.length, 13);
+    const allCategoriesLenght = allCategories.length;
+    assert.equal(allCategoriesLenght, 13);
     await db.categoryStore.deleteCategoryById(testCategories[0]._id);
     const newAllCategories = await db.categoryStore.getAllCategories();
-    assert.equal(newAllCategories.length, allCategories.length - 1);
+    assert.equal(newAllCategories.length, allCategoriesLenght - 1);
   });
 
   test("delete all categories", async () => {
@@ -59,7 +60,7 @@ suite("Category Model tests", () => {
   });
 
   suiteTeardown(async () => {
-    db.init("json");
+    await db.init(storeType);
     await db.categoryStore.deleteAllCategories();
   });
 });
