@@ -90,9 +90,15 @@ export const dashboardController = {
     },
     handler: async function (request, h) {
       const loggedInUser = request.auth.credentials;
+      const categoryNameRaw = request.payload.categoryName;
+      const categoryName = categoryNameRaw.charAt(0).toUpperCase() + categoryNameRaw.slice(1).toLowerCase();
+      let category = await db.categoryStore.getCategoryByName(categoryName);
+      if (!category) {
+        category = await db.categoryStore.addCategory({ name: categoryName });
+      }
       const newPlacemark = {
         name: request.payload.name,
-        categoryId: request.payload.category,
+        categoryId: category._id,
         description: request.payload.description || request.payload.name,
         longitude: Number(request.payload.longitude),
         latitude: Number(request.payload.latitude),

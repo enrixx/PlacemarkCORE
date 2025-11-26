@@ -26,8 +26,29 @@ export const testUsers = [
   },
 ];
 
+export const testCategories = [
+  { name: "Restaurant" },
+  { name: "Museum" },
+  { name: "Shopping" },
+  { name: "Park" },
+  { name: "Beach" },
+  { name: "Hotel" },
+  { name: "Cinema" },
+  { name: "Gym" },
+  { name: "Library" },
+  { name: "Theater" },
+  { name: "Stadium" },
+  { name: "Gas Station" },
+  { name: "Other" },
+];
+
+export const categorySightseeing = {
+  name: "Sightseeing",
+};
+
 export const eiffelTower = {
   name: "Eiffel Tower",
+  description: "The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France.",
   longitude: 2.2946,
   latitude: 48.8584,
 };

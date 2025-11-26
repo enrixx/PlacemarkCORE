@@ -1,10 +1,15 @@
 import { assert } from "chai";
-import { db } from "../src/models/db.js";
-import { maggie, testUsers } from "./fixtures.js";
+import dotenv from "dotenv";
+import { db } from "../../src/models/db.js";
+import { maggie, testUsers } from "../fixtures.js";
+
+dotenv.config();
 
 suite("User Model tests", () => {
+  const storeType = process.env.DB_TYPE || "mem";
+  console.log(`Running tests with ${storeType} store`);
   setup(async () => {
-    db.init("json");
+    await db.init(storeType);
     await db.userStore.deleteAll();
     for (let i = 0; i < testUsers.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
@@ -64,7 +69,7 @@ suite("User Model tests", () => {
   });
 
   suiteTeardown(async () => {
-    db.init("json");
+    await db.init(storeType);
     await db.userStore.deleteAll();
   });
 });

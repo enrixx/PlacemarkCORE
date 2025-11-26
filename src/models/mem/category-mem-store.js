@@ -1,40 +1,42 @@
 import { v4 } from "uuid";
 
-let categories = [
-  { _id: v4(), name: "General", description: "General topics" }
-];
+let categories = [{ _id: v4(), name: "General" }];
 
 export const categoryMemStore = {
+  async addCategory(category) {
+    category._id = v4();
+    categories.push(category);
+    return category;
+  },
+
   async getAllCategories() {
     return categories;
   },
 
-  async addCategory(category) {
-    const newCat = { _id: v4(), name: category.name, description: category.description || "" };
-    categories.push(newCat);
-    return newCat;
-  },
-
   async getCategoryById(id) {
-    return categories.find(c => c._id === id) || null;
+    return categories.find((c) => c._id === id) || null;
   },
 
   async getCategoryByName(name) {
-    if (!name) return null;
-    const norm = name.trim().toLowerCase();
-    return categories.find(c => (c.name || "").toLowerCase() === norm) || null;
+    return categories.find((category) => category.name.toLowerCase() === name.toLowerCase());
   },
 
   async searchCategories(query) {
     if (!query) return [];
     const q = query.trim().toLowerCase();
-    return categories.filter(c =>
-      (c.name || "").toLowerCase().includes(q) ||
-      (c.description || "").toLowerCase().includes(q)
-    );
+    return categories.filter((c) => (c.name || "").toLowerCase().includes(q) || (c.description || "").toLowerCase().includes(q));
+  },
+
+  async deleteCategoryById(id) {
+    const index = categories.findIndex((c) => c._id === id);
+    if (index === -1) {
+      return false;
+    }
+    categories.splice(index, 1);
+    return true;
   },
 
   async deleteAllCategories() {
     categories = [];
-  }
+  },
 };

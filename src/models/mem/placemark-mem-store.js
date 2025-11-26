@@ -2,6 +2,15 @@ import { v4 } from "uuid";
 
 let placemarks = [];
 
+function normalizeImages(obj) {
+  if (!obj.img || obj.img.length === 0) {
+    obj.img = null;
+  }
+  if (!obj.imgPublicId || obj.imgPublicId.length === 0) {
+    obj.imgPublicId = null;
+  }
+}
+
 export const placemarkMemStore = {
   async getAllPlacemarks() {
     return placemarks;
@@ -10,6 +19,7 @@ export const placemarkMemStore = {
   async addPlacemark(userid, placemark) {
     placemark._id = v4();
     placemark.userid = userid;
+    normalizeImages(placemark);
     placemarks.push(placemark);
     return placemark;
   },
@@ -44,6 +54,21 @@ export const placemarkMemStore = {
 
   async getUserPlacemarks(userid) {
     return placemarks.filter((placemark) => placemark.userid === userid);
+  },
+
+  async updatePlacemark(placemarkId, userId, updatedPlacemark) {
+    const placemark = placemarks.find((p) => p._id === placemarkId && p.userid === userId);
+    if (!placemark) throw new Error("Placemark not found");
+    normalizeImages(updatedPlacemark);
+    if (placemark) {
+      placemark.name = updatedPlacemark.name;
+      placemark.categoryId = updatedPlacemark.categoryId;
+      placemark.description = updatedPlacemark.description;
+      placemark.latitude = updatedPlacemark.latitude;
+      placemark.longitude = updatedPlacemark.longitude;
+      placemark.img = updatedPlacemark.img;
+      placemark.imgPublicId = updatedPlacemark.imgPublicId;
+    }
   },
 
   async getPlacemarksByCategory(categoryId) {
