@@ -48,7 +48,7 @@ async function init() {
     isCached: false,
   });
   handlebarsHelpers.register();
-  db.init("json");
+  db.init(process.env.DB_TYPE);
   server.route(webRoutes);
   await server.start();
   console.log("Server running on %s", server.info.uri);

@@ -56,15 +56,26 @@ export const placemarkController = {
       const loggedInUser = request.auth.credentials;
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
 
-      const categoryId = request.payload.category;
+      if (placemark.userid !== loggedInUser._id) {
+        return h.redirect("/dashboard");
+      }
+
+      const categoryNameRaw = request.payload.categoryName;
+      const categoryName = categoryNameRaw.charAt(0).toUpperCase() + categoryNameRaw.slice(1).toLowerCase();
+
+      let category = await db.categoryStore.getCategoryByName(categoryName);
+      if (!category) {
+        category = await db.categoryStore.addCategory({ name: categoryName });
+      }
 
       const newPlacemark = {
         name: request.payload.name,
-        categoryId: categoryId,
+        categoryId: category._id,
         description: request.payload.description,
         longitude: Number(request.payload.longitude),
         latitude: Number(request.payload.latitude),
       };
+
       await db.placemarkStore.updatePlacemark(placemark._id, loggedInUser._id, newPlacemark);
       return h.redirect(`/placemark/${placemark._id}`);
     },
@@ -72,10 +83,14 @@ export const placemarkController = {
 
   uploadImage: {
     handler: async function (request, h) {
-      try {
-        const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
-        const file = request.payload.imagefile;
+      const loggedInUser = request.auth.credentials;
+      const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
 
+      try {
+        if (placemark.userid !== loggedInUser._id) {
+          return h.redirect("/dashboard");
+        }
+        const file = request.payload.imagefile;
         if (file && file.length > 0) {
           const imageData = await imageStore.uploadImage(file);
           placemark.img = imageData.url;
@@ -84,11 +99,18 @@ export const placemarkController = {
         } else {
           throw new Error("No image file provided");
         }
+
         return h.redirect(`/placemark/${placemark._id}`);
       } catch (err) {
-        console.error("Upload error:", err);
-        const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
-        return h.redirect(`/placemark/${placemark._id}`);
+        const categories = await db.categoryStore.getAllCategories();
+
+        return h.view("placemark-view", {
+          title: "Upload Error",
+          placemark: placemark,
+          categories: categories,
+          user: loggedInUser,
+          errors: [{ message: err.message }],
+        });
       }
     },
     payload: {

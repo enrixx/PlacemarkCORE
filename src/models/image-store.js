@@ -17,24 +17,22 @@ export const imageStore = {
       mkdirSync(publicDir, { recursive: true });
     }
     const tempPath = `./public/temp-${Date.now()}.img`;
-    writeFileSync(tempPath, imagefile);
-    const response = await cloudinary.uploader.upload(tempPath, {
-      folder: "placemark-core",
-      resource_type: "auto",
-      type: "private",
-    });
-    unlinkSync(tempPath);
-
-    const signedUrl = cloudinary.url(response.public_id, {
-      type: "private",
-      sign_url: true,
-      secure: true,
-    });
-
-    return {
-      url: signedUrl,
-      publicId: response.public_id,
-    };
+    try {
+      writeFileSync(tempPath, imagefile);
+      const response = await cloudinary.uploader.upload(tempPath, {
+        folder: "placemark-core",
+        resource_type: "auto",
+        type: "private",
+      });
+      return {
+        url: cloudinary.url(response.public_id, { type: "private", sign_url: true, secure: true }),
+        publicId: response.public_id,
+      };
+    } finally {
+      if (existsSync(tempPath)) {
+        unlinkSync(tempPath);
+      }
+    }
   },
 
   getSignedUrl: function (publicId) {

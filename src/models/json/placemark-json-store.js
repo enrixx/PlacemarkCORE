@@ -1,6 +1,15 @@
 import { v4 } from "uuid";
 import { db } from "./store-utils.js";
 
+function normalizeImages(obj) {
+  if (!obj.img || obj.img.length === 0) {
+    obj.img = null;
+  }
+  if (!obj.imgPublicId || obj.imgPublicId.length === 0) {
+    obj.imgPublicId = null;
+  }
+}
+
 export const placemarkJsonStore = {
   async getAllPlacemarks() {
     await db.read();
@@ -11,6 +20,7 @@ export const placemarkJsonStore = {
     await db.read();
     placemark._id = v4();
     placemark.userid = userid;
+    normalizeImages(placemark);
     db.data.placemarks.push(placemark);
     await db.write();
     return placemark;
@@ -58,6 +68,8 @@ export const placemarkJsonStore = {
   async updatePlacemark(placemarkId, userId, updatedPlacemark) {
     await db.read();
     const placemark = db.data.placemarks.find((p) => p._id === placemarkId && p.userid === userId);
+    if (!placemark) throw new Error("Placemark not found");
+    normalizeImages(updatedPlacemark);
     if (placemark) {
       placemark.name = updatedPlacemark.name;
       placemark.categoryId = updatedPlacemark.categoryId;
@@ -74,6 +86,6 @@ export const placemarkJsonStore = {
     if (!categoryId) return [];
     await db.read();
     const placemarks = db.data?.placemarks || [];
-    return placemarks.filter(p => (p.categoryId || "") === categoryId);
+    return placemarks.filter((p) => (p.categoryId || "") === categoryId);
   },
 };
