@@ -14,6 +14,12 @@ This project uses environment variables for configuration. You need to create a 
 
 2. Open the .env file and update the values.
 
+3. OPTIONAL FOR LOCALHOST MONGODB:
+   ```sh
+   mkdir db
+   mongod --dbpath db
+   ```
+
 ## Features
 
 -   **User Authentication:** Secure user registration and login.
