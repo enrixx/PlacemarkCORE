@@ -2,6 +2,18 @@
 
 A simple web application for managing and sharing geographical placemarks. Users can register, log in, and create placemarks with a name and coordinates. They can view placemarks created by all users but can only delete their own.
 
+### Configuration
+
+This project uses environment variables for configuration. You need to create a `.env` file in the root directory of the project to set up your database, security keys, and cloud storage.
+
+1. Create the file by copying the provided example:
+   ```sh
+   cp .env.example .env
+   ```
+    (On Windows, you can just manually duplicate the file and rename it).
+
+2. Open the .env file and update the values.
+
 ## Features
 
 -   **User Authentication:** Secure user registration and login.
