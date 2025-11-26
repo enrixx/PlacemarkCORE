@@ -1,8 +1,10 @@
 import { v4 } from "uuid";
+import dotenv from "dotenv";
 import { db } from "./json/store-utils.js";
 import { userJsonStore } from "./json/user-json-store.js";
 import { userMemStore } from "./mem/user-mem-store.js";
 
+dotenv.config();
 const email = process.env.ADMIN_EMAIL;
 const password = process.env.ADMIN_PASSWORD;
 const firstName = process.env.ADMIN_FIRSTNAME;
@@ -40,8 +42,3 @@ export async function seedAdmin(storeType) {
     await seedAdminMem(admin);
   }
 }
-
-
-
-
-
