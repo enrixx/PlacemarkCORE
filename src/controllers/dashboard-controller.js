@@ -11,26 +11,15 @@ export const dashboardController = {
       const allPlacemarks = store.getPlacemarksByCategory && categoryId ? await store.getPlacemarksByCategory(categoryId) : await store.getAllPlacemarks();
       const categoriesRaw = await db.categoryStore.getAllCategories();
 
-      const categories = (categoriesRaw || []).map((c) => ({ ...c, selected: c._id === categoryId }));
-      const idToName = new Map((categories || []).map((c) => [c._id, c.name || ""]));
+      const categories = (categoriesRaw || []).map((c) => ({ ...c, selected: c._id.toString() === categoryId }));
+      const idToName = new Map((categoriesRaw || []).map((c) => [c._id.toString(), c.name || ""]));
       const placemarks = await Promise.all(
         allPlacemarks.map(async (p) => {
-          if (p.imgPublicId) {
-            p.img = imageStore.getSignedUrl(p.imgPublicId);
-          } else if (p.img) {
-            const extractedPublicId = imageStore.extractPublicId(p.img);
-            if (extractedPublicId) {
-              p.img = imageStore.getSignedUrl(extractedPublicId);
-              p.imgPublicId = extractedPublicId;
-              db.placemarkStore.updatePlacemark(p._id, p.userid, p).catch((err) => console.error("Error updating placemark:", err));
-            }
-          }
-
           const user = await db.userStore.getUserById(p.userid);
           return {
             ...p,
-            categoryName: idToName.get(p.categoryId) || "",
-            isOwner: p.userid === loggedInUser._id,
+            categoryName: p.categoryId ? idToName.get(p.categoryId.toString()) || "" : "",
+            isOwner: p.userid.toString() === loggedInUser._id.toString(),
             userEmail: user ? user.email : "Unknown User",
           };
         })

@@ -1,12 +1,15 @@
 import Joi from "joi";
 
-export const UserSpec = {
+export const UserSpecForSignup = Joi.object().keys({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().required(),
+});
+
+export const UserSpec = UserSpecForSignup.keys({
   role: Joi.string().valid("user", "admin").default("user"),
-};
+}).label("UserSpec");
 
 export const UserCredentialsSpec = {
   email: Joi.string().email().required(),

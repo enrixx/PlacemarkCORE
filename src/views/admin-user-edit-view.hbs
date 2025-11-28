@@ -36,8 +36,11 @@
 			<div class="field">
 				<label class="label">Password</label>
 				<div class="control">
-					<input class="input" name="password" type="password" value="" {{#unless editUser}}required{{/unless}}>
+					<input class="input" name="password" type="password" placeholder="{{#if editUser}}Leave blank to keep current password; enter a new one to change it{{else}}Enter a password{{/if}}" autocomplete="new-password" {{#unless editUser}}required{{/unless}}>
 				</div>
+				{{#if editUser}}
+				<p class="help">Leave blank to keep the existing password. To change it, enter a new password and save.</p>
+				{{/if}}
 			</div>
 			<div class="field">
 				<label class="label">Role</label>
@@ -63,4 +66,3 @@
 
 	</div>
 </section>
-

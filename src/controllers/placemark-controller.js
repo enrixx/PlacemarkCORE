@@ -7,7 +7,7 @@ export const placemarkController = {
       const loggedInUser = request.auth.credentials;
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
       const categories = await db.categoryStore.getAllCategories();
-      const idToName = new Map((categories || []).map((c) => [c._id, c.name || ""]));
+      const idToName = new Map((categories || []).map((c) => [c._id.toString(), c.name || ""]));
 
       if (placemark.imgPublicId) {
         placemark.img = imageStore.getSignedUrl(placemark.imgPublicId);
@@ -20,12 +20,13 @@ export const placemarkController = {
         }
       }
 
-      placemark.categoryName = idToName.get(placemark.categoryId) || "";
+      placemark.categoryName = idToName.get(placemark.categoryId.toString()) || "";
       const viewData = {
         title: "Placemark",
         placemark: placemark,
         user: loggedInUser,
         categories: categories,
+        isOwner: placemark.userid.toString() === loggedInUser._id.toString(),
       };
       return h.view("placemark-view", viewData);
     },
@@ -35,13 +36,13 @@ export const placemarkController = {
     handler: async function (request, h) {
       const loggedInUser = request.auth.credentials;
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
-      const categoriesRaw = await db.categoryStore.getAllCategories();
-      const categories = (categoriesRaw || []).map((c) => ({ ...c, selected: c._id === placemark.categoryId }));
-      const idToName = new Map((categories || []).map((c) => [c._id, c.name || ""]));
-      placemark.categoryName = idToName.get(placemark.categoryId) || "";
-      if (placemark.userid !== loggedInUser._id) {
+      if (placemark.userid.toString() !== loggedInUser._id.toString()) {
         return h.redirect("/dashboard");
       }
+      const categoriesRaw = await db.categoryStore.getAllCategories();
+      const categories = (categoriesRaw || []).map((c) => ({ ...c, selected: c._id.toString() === placemark.categoryId.toString() }));
+      const idToName = new Map((categoriesRaw || []).map((c) => [c._id.toString(), c.name || ""]));
+      placemark.categoryName = idToName.get(placemark.categoryId.toString()) || "";
       const viewData = {
         title: "Edit Placemark",
         placemark: placemark,
@@ -56,7 +57,7 @@ export const placemarkController = {
       const loggedInUser = request.auth.credentials;
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
 
-      if (placemark.userid !== loggedInUser._id) {
+      if (placemark.userid.toString() !== loggedInUser._id.toString()) {
         return h.redirect("/dashboard");
       }
 
@@ -87,7 +88,7 @@ export const placemarkController = {
       const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
 
       try {
-        if (placemark.userid !== loggedInUser._id) {
+        if (placemark.userid.toString() !== loggedInUser._id.toString()) {
           return h.redirect("/dashboard");
         }
         const file = request.payload.imagefile;
@@ -127,7 +128,7 @@ export const placemarkController = {
         const loggedInUser = request.auth.credentials;
         const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
 
-        if (placemark.userid !== loggedInUser._id) {
+        if (placemark.userid.toString() !== loggedInUser._id.toString()) {
           return h.redirect("/dashboard");
         }
 

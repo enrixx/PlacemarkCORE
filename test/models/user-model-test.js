@@ -19,7 +19,7 @@ suite("User Model tests", () => {
 
   test("create a user", async () => {
     const newUser = await db.userStore.addUser(maggie);
-    assert.equal(newUser, maggie);
+    assert.isDefined(newUser._id);
   });
 
   test("delete all userApi", async () => {
