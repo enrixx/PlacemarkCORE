@@ -51,7 +51,6 @@ export const adminController = {
     },
     handler: async function (request, h) {
       const user = request.payload;
-      // Ensure role cannot be set via this public spec; admin UI may set role via update
       await db.userStore.addUser(user);
       return h.redirect("/admin/users");
     },

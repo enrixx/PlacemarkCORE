@@ -1,14 +1,9 @@
-import path from "path";
-import { fileURLToPath } from "url";
 import { accountController } from "./controllers/account-controller.js";
 import { dashboardController } from "./controllers/dashboard-controller.js";
 import { placemarkController } from "./controllers/placemark-controller.js";
 import { adminMiddleware } from "./utils/admin-middleware.js";
 import { adminController } from "./controllers/admin-controller.js";
 import { categoryController } from "./controllers/category-controller.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export const webRoutes = [
   { method: "GET", path: "/", config: accountController.index },
@@ -28,6 +23,8 @@ export const webRoutes = [
   { method: "POST", path: "/placemark/update/{id}", config: placemarkController.update },
   { method: "POST", path: "/placemark/{id}/uploadimage", config: placemarkController.uploadImage },
   { method: "GET", path: "/placemark/{id}/deleteimage", config: placemarkController.deleteImage },
+
+  { method: "GET", path: "/categories", handler: categoryController.list.handler },
 
   {
     method: "GET",
@@ -74,11 +71,5 @@ export const webRoutes = [
     method: "GET",
     path: "/admin/placemark/{id}/delete",
     config: { pre: [{ method: adminMiddleware.requireAdmin }], handler: adminController.deletePlacemark.handler },
-  },
-
-  {
-    method: "GET",
-    path: "/api/categories",
-    handler: categoryController.list.handler,
   },
 ];
