@@ -9,6 +9,7 @@ export const userMemStore = {
 
   async addUser(user) {
     user._id = v4();
+    user.role = user.role || "user";
     users.push(user);
     return user;
   },
@@ -41,11 +42,11 @@ export const userMemStore = {
       user.lastName = updatedUser.lastName;
       user.email = updatedUser.email;
       user.password = updatedUser.password;
-      user.role = updatedUser.role;
+      user.role = updatedUser.role || "user";
     }
   },
 
   async getAdminCount() {
-    return users.filter(user => user.role === "admin").length;
-  }
+    return users.filter((user) => user.role === "admin").length;
+  },
 };

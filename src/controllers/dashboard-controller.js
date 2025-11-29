@@ -1,14 +1,17 @@
 import { db } from "../models/db.js";
-import { imageStore } from "../models/image-store.js";
 import { PlacemarkSpec } from "../models/joi-schemas.js";
 
 export const dashboardController = {
   index: {
     handler: async function (request, h) {
       const loggedInUser = request.auth.credentials;
-      const categoryId = request.query.category || "";
-      const store = db.placemarkStore;
-      const allPlacemarks = store.getPlacemarksByCategory && categoryId ? await store.getPlacemarksByCategory(categoryId) : await store.getAllPlacemarks();
+      const categoryId = request.query.categoryId || "";
+      let allPlacemarks;
+      if (categoryId) {
+        allPlacemarks = await db.placemarkStore.getPlacemarksByCategoryId(categoryId);
+      } else {
+        allPlacemarks = await db.placemarkStore.getAllPlacemarks();
+      }
       const categoriesRaw = await db.categoryStore.getAllCategories();
 
       const categories = (categoriesRaw || []).map((c) => ({ ...c, selected: c._id.toString() === categoryId }));

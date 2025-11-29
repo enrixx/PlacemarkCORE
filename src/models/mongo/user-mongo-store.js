@@ -17,6 +17,7 @@ export const userMongoStore = {
   },
 
   async addUser(user) {
+    user.role = user.role || "user";
     const newUser = new User(user);
     const userObj = await newUser.save();
     return this.getUserById(userObj._id);
@@ -46,7 +47,7 @@ export const userMongoStore = {
       user.lastName = updatedUser.lastName;
       user.email = updatedUser.email;
       if (updatedUser.password) user.password = updatedUser.password;
-      user.role = updatedUser.role;
+      user.role = updatedUser.role || "user";
       await user.save();
     }
   },

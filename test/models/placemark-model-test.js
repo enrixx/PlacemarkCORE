@@ -107,11 +107,9 @@ suite("Placemark Model tests", () => {
     const categorySightseeingDb = await db.categoryStore.addCategory(categorySightseeing);
     const eiffelTowerWithCategory = { ...eiffelTower, categoryId: categorySightseeingDb._id };
     const placemark = await db.placemarkStore.addPlacemark(user._id, eiffelTowerWithCategory);
-    console.log(placemark);
     const updatedPlacemark = { ...placemark, name: "Updated Eiffel Tower" };
     await db.placemarkStore.updatePlacemark(placemark._id, user._id, updatedPlacemark);
     const returnedPlacemark = await db.placemarkStore.getPlacemarkById(placemark._id);
-    console.log(returnedPlacemark);
     assert.deepEqual(returnedPlacemark.name, updatedPlacemark.name);
     assert.deepEqual(returnedPlacemark, updatedPlacemark);
   });

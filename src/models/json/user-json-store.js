@@ -10,6 +10,7 @@ export const userJsonStore = {
   async addUser(user) {
     await db.read();
     user._id = v4();
+    user.role = user.role || "user";
     db.data.users.push(user);
     await db.write();
     return user;
@@ -49,13 +50,13 @@ export const userJsonStore = {
       user.lastName = updatedUser.lastName;
       user.email = updatedUser.email;
       user.password = updatedUser.password;
-      user.role = updatedUser.role;
+      user.role = updatedUser.role || "user";
     }
     await db.write();
   },
 
   async getAdminCount() {
     await db.read();
-    return db.data.users.filter(user => user.role === "admin").length;
-  }
+    return db.data.users.filter((user) => user.role === "admin").length;
+  },
 };
