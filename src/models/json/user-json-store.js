@@ -10,6 +10,7 @@ export const userJsonStore = {
   async addUser(user) {
     await db.read();
     user._id = v4();
+    user.role = user.role || "user";
     db.data.users.push(user);
     await db.write();
     return user;
@@ -39,5 +40,23 @@ export const userJsonStore = {
   async deleteAll() {
     db.data.users = [];
     await db.write();
+  },
+
+  async updateUser(userId, updatedUser) {
+    await db.read();
+    const user = db.data.users.find((u) => u._id === userId);
+    if (user) {
+      user.firstName = updatedUser.firstName;
+      user.lastName = updatedUser.lastName;
+      user.email = updatedUser.email;
+      user.password = updatedUser.password;
+      user.role = updatedUser.role || "user";
+    }
+    await db.write();
+  },
+
+  async getAdminCount() {
+    await db.read();
+    return db.data.users.filter((user) => user.role === "admin").length;
   },
 };

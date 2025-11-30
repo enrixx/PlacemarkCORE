@@ -1,8 +1,28 @@
+export const serviceUrl = "http://localhost:3000";
+
 export const maggie = {
   firstName: "Maggie",
   lastName: "Simpson",
   email: "maggie@simpson.com",
   password: "secret",
+};
+
+export const maggieCredentials = {
+  email: "maggie@simpson.com",
+  password: "secret",
+};
+
+export const admin = {
+  firstName: "Admin",
+  lastName: "User",
+  email: "admin@example.com",
+  password: "admin",
+  role: "admin",
+};
+
+export const adminCredentials = {
+  email: "admin@example.com",
+  password: "admin",
 };
 
 export const testUsers = [
@@ -26,8 +46,29 @@ export const testUsers = [
   },
 ];
 
+export const testCategories = [
+  { name: "Restaurant" },
+  { name: "Museum" },
+  { name: "Shopping" },
+  { name: "Park" },
+  { name: "Beach" },
+  { name: "Hotel" },
+  { name: "Cinema" },
+  { name: "Gym" },
+  { name: "Library" },
+  { name: "Theater" },
+  { name: "Stadium" },
+  { name: "Gas Station" },
+  { name: "Other" },
+];
+
+export const categorySightseeing = {
+  name: "Sightseeing",
+};
+
 export const eiffelTower = {
   name: "Eiffel Tower",
+  description: "The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France.",
   longitude: 2.2946,
   latitude: 48.8584,
 };

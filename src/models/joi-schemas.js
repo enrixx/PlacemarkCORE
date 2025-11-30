@@ -1,21 +1,62 @@
 import Joi from "joi";
 
-export const UserSpec = {
-  firstName: Joi.string().required(),
-  lastName: Joi.string().required(),
-  email: Joi.string().email().required(),
-  password: Joi.string().required(),
-};
+export const IdSpec = Joi.alternatives().try(Joi.string(), Joi.object()).description("a valid ID");
 
-export const UserCredentialsSpec = {
-  email: Joi.string().email().required(),
-  password: Joi.string().required(),
-};
+export const UserCredentialsSpec = Joi.object({
+  email: Joi.string().email().example("homer@simpson.com").required(),
+  password: Joi.string().example("secret").required(),
+}).label("UserCredentials");
 
-export const PlacemarkSpec = {
+export const UserSpec = UserCredentialsSpec.keys({
+  firstName: Joi.string().example("Homer").required(),
+  lastName: Joi.string().example("Simpson").required(),
+}).label("UserDetails");
+
+export const UserSpecForAdminCreate = UserSpec.keys({
+  role: Joi.string().valid("user", "admin").default("user"),
+}).label("UserSpecForAdminCreate");
+
+export const UserSpecPlus = UserSpec.keys({
+  role: Joi.string().valid("user", "admin").required(),
+  _id: IdSpec,
+  __v: Joi.number(),
+}).label("UserDetailsPlus");
+
+export const UserArray = Joi.array().items(UserSpecPlus).label("UserArray");
+
+export const PlacemarkSpec = Joi.object({
   name: Joi.string().required(),
-  category: Joi.string().required(),
-  description: Joi.string(),
+  categoryName: Joi.string().required(),
+  description: Joi.string().optional(),
   longitude: Joi.number().required(),
   latitude: Joi.number().required(),
-};
+  img: Joi.string().optional().allow(null),
+  imgPublicId: Joi.string().optional().allow(null),
+}).label("PlacemarkSpec");
+
+export const PlacemarkSpecPlus = PlacemarkSpec.keys({
+  categoryId: IdSpec,
+  userid: IdSpec,
+  _id: IdSpec,
+  __v: Joi.number(),
+}).label("PlacemarkDetailsPlus");
+
+export const PlacemarkArray = Joi.array().items(PlacemarkSpecPlus).label("PlacemarkArray");
+
+export const CategorySpec = Joi.object({
+  name: Joi.string().required().example("Landmarks"),
+}).label("CategorySpec");
+
+export const CategorySpecPlus = CategorySpec.keys({
+  _id: IdSpec,
+  __v: Joi.number(),
+}).label("CategoryDetailsPlus");
+
+export const CategoryArray = Joi.array().items(CategorySpecPlus).label("CategoryArray");
+
+export const JwtAuth = Joi.object()
+  .keys({
+    success: Joi.boolean().example("true").required(),
+    token: Joi.string().example("eyJhbGciOiJND.g5YmJisIjoiaGYwNTNjAOhE.gCWGmY5-YigQw0DCBo").required(),
+  })
+  .label("JwtAuth");

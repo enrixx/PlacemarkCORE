@@ -1,6 +1,31 @@
 {{> menu active="dashboard"}}
 
 <section class="section">
-    <a href="/dashboard/addplacemarkpage" class="button is-link">Add Placemark</a>
-    {{> list-placemarks}}
+	<div class="field is-grouped is-justify-content-space-between">
+		<p class="control">
+			<a href="/dashboard/addplacemarkpage" class="button is-link">Add Placemark</a>
+		</p>
+		<form class="control" method="GET" action="/dashboard">
+			<div class="field is-grouped">
+				<div class="control">
+					<label class="label is-sr-only" for="category-select" >Category</label>
+					<div class="select">
+						<select id="category-select" name="categoryId">
+							<option value="">All categories</option>
+							{{#each categories}}
+								<option value="{{_id}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+							{{/each}}
+						</select>
+					</div>
+				</div>
+				<div class="control">
+					<button type="submit" class="button" aria-label="Filter">
+						<span class="icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	{{> list-placemarks}}
 </section>

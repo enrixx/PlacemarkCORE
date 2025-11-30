@@ -1,19 +1,26 @@
 <nav class="navbar">
-    <div class="navbar-brand">
-        {{> placemark-core-brand}}
-    </div>
-    <div class="navbar-menu" id="navMenu">
-        <div class="navbar-end">
-            <div class="navbar-item">
-                <div class="buttons">
-                    <a id="dashboard" class="button" href="/dashboard"> Dashboard </a>
-                    <a id="logout" class="button" href="/logout"> Logout </a>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="navbar-brand">
+		{{> placemark-core-brand}}
+	</div>
+	<div class="navbar-menu" id="navMenu">
+		<div class="navbar-end">
+			<div class="navbar-item">
+				<div class="buttons">
+					<a id="dashboard" class="button" href="/dashboard"> Dashboard </a>
+
+					{{#if user}}
+						{{#ifEq user.role "admin"}}
+							<a id="admin" class="button" href="/admin"> Admin </a>
+						{{/ifEq}}
+					{{/if}}
+
+					<a id="logout" class="button" href="/logout"> Logout </a>
+				</div>
+			</div>
+		</div>
+	</div>
 </nav>
 
 <script>
-    document.getElementById("{{active}}").classList.add("is-primary");
+	document.getElementById("{{active}}").classList.add("is-primary");
 </script>
