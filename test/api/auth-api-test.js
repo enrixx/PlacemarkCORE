@@ -2,13 +2,10 @@ import { assert } from "chai";
 import { placecoreService } from "./placemark-service.js";
 import { decodeToken } from "../../src/api/jwt-utils.js";
 import { adminCredentials, maggie, maggieCredentials } from "../fixtures.js";
-import { seedAdmin } from "../../src/models/seed-admin.js";
 
 suite("Authentication API tests", async () => {
-  const storeType = process.env.DB_TYPE || "mem";
   setup(async () => {
     await placecoreService.clearAuth();
-    await seedAdmin(storeType);
     await placecoreService.authenticate(adminCredentials);
     await placecoreService.deleteAllUsers();
   });
@@ -40,7 +37,6 @@ suite("Authentication API tests", async () => {
   });
 
   suiteTeardown(async () => {
-    await seedAdmin(storeType);
     await placecoreService.authenticate(adminCredentials);
     await placecoreService.deleteAllUsers();
   });

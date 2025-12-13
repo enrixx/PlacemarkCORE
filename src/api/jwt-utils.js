@@ -8,6 +8,8 @@ export function createToken(user) {
   const payload = {
     id: user._id,
     email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
     scope: user.role,
   };
   const options = {
@@ -34,7 +36,7 @@ export function decodeToken(token) {
   return userInfo;
 }
 
-export async function validate(decoded, request) {
+export async function validate(decoded) {
   const user = await db.userStore.getUserById(decoded.id);
   if (!user) {
     return { isValid: false };

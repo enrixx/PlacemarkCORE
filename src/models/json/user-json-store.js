@@ -38,7 +38,9 @@ export const userJsonStore = {
   },
 
   async deleteAll() {
-    db.data.users = [];
+    await db.read();
+    // Delete all non-admin users to preserve seeded admin
+    db.data.users = db.data.users.filter((user) => user.role === "admin");
     await db.write();
   },
 

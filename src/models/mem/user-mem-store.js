@@ -32,7 +32,8 @@ export const userMemStore = {
   },
 
   async deleteAll() {
-    users = [];
+    // Delete all non-admin users to preserve seeded admin
+    users = users.filter((user) => user.role === "admin");
   },
 
   async updateUser(userId, updatedUser) {

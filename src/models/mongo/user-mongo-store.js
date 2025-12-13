@@ -37,7 +37,8 @@ export const userMongoStore = {
   },
 
   async deleteAll() {
-    await User.deleteMany({});
+    // Delete all non-admin users to preserve seeded admin
+    await User.deleteMany({ role: { $ne: "admin" } });
   },
 
   async updateUser(id, updatedUser) {

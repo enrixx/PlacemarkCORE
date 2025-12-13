@@ -15,32 +15,30 @@ export const db = {
   placemarkStore: null,
   categoryStore: null,
 
-  // Todo: Rework SeedAdmin
   async init(storeType) {
     switch (storeType) {
       case "mem":
         this.userStore = userMemStore;
         this.placemarkStore = placemarkMemStore;
         this.categoryStore = categoryMemStore;
-        // await seedAdmin("mem");
         break;
       case "json":
         this.userStore = userJsonStore;
         this.placemarkStore = placemarkJsonStore;
         this.categoryStore = categoryJsonStore;
-        // await seedAdmin("json");
         break;
       case "mongo":
         this.userStore = userMongoStore;
         this.placemarkStore = placemarkMongoStore;
         this.categoryStore = categoryMongoStore;
         connectMongo();
-        // await seedAdmin("mongo");
         break;
       default:
         this.userStore = userMemStore;
         this.placemarkStore = placemarkMemStore;
         this.categoryStore = categoryMemStore;
     }
+
+    await seedAdmin();
   },
 };
