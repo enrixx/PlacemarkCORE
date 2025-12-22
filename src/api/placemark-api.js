@@ -3,6 +3,7 @@ import { db } from "../models/db.js";
 import { IdSpec, PlacemarkArray, PlacemarkSpec, PlacemarkSpecCreate, PlacemarkSpecPlus } from "../models/joi-schemas.js";
 import { validationError } from "./logger.js";
 import { weatherService } from "../utils/weather-service.js";
+import { placemarkUtils } from "../utils/placemark-utils.js";
 
 export const placemarkApi = {
   find: {
@@ -11,7 +12,8 @@ export const placemarkApi = {
     },
     handler: async function (request, h) {
       try {
-        return await db.placemarkStore.getAllPlacemarks();
+        const placemarks = await db.placemarkStore.getAllPlacemarks();
+        return await placemarkUtils.enrichPlacemarks(placemarks);
       } catch (err) {
         return Boom.serverUnavailable("Database Error");
       }
@@ -32,7 +34,7 @@ export const placemarkApi = {
         if (!placemark) {
           return Boom.notFound("No placemark with this id");
         }
-        return placemark;
+        return await placemarkUtils.enrichPlacemark(placemark);
       } catch (err) {
         return Boom.serverUnavailable("No placemark with this id");
       }
@@ -58,7 +60,8 @@ export const placemarkApi = {
         }
         const placemark = await db.placemarkStore.addPlacemark(request.auth.credentials._id, { ...request.payload, categoryId: category._id });
         if (placemark) {
-          return h.response(placemark).code(201);
+          const enrichedPlacemark = await placemarkUtils.enrichPlacemark(placemark);
+          return h.response(enrichedPlacemark).code(201);
         }
         return Boom.badImplementation("error creating placemark");
       } catch (err) {
@@ -87,7 +90,8 @@ export const placemarkApi = {
         }
         const updatedPlacemark = await db.placemarkStore.updatePlacemark(request.params.id, request.payload);
         if (updatedPlacemark) {
-          return h.response(updatedPlacemark).code(200);
+          const enrichedPlacemark = await placemarkUtils.enrichPlacemark(updatedPlacemark);
+          return h.response(enrichedPlacemark).code(200);
         }
         return Boom.badImplementation("error updating placemark");
       } catch (err) {
@@ -154,7 +158,8 @@ export const placemarkApi = {
     },
     handler: async function (request, h) {
       try {
-        return await db.placemarkStore.getPlacemarksByUserId(request.params.id);
+        const placemarks = await db.placemarkStore.getPlacemarksByUserId(request.params.id);
+        return await placemarkUtils.enrichPlacemarks(placemarks);
       } catch (err) {
         return Boom.serverUnavailable("Database Error");
       }
@@ -172,7 +177,8 @@ export const placemarkApi = {
     },
     handler: async function (request, h) {
       try {
-        return await db.placemarkStore.getPlacemarksByCategoryId(request.params.id);
+        const placemarks = await db.placemarkStore.getPlacemarksByCategoryId(request.params.id);
+        return await placemarkUtils.enrichPlacemarks(placemarks);
       } catch (err) {
         return Boom.serverUnavailable("Database Error");
       }
@@ -183,6 +189,7 @@ export const placemarkApi = {
     validate: { params: { id: IdSpec }, failAction: validationError },
     response: { schema: PlacemarkArray, failAction: validationError },
   },
+
   getWeather: {
     auth: {
       strategy: "jwt",

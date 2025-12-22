@@ -1,13 +1,12 @@
 import { db } from "../models/db.js";
 import { imageStore } from "../models/image-store.js";
+import { placemarkUtils } from "../utils/placemark-utils.js";
 
 export const placemarkController = {
   index: {
     handler: async function (request, h) {
       const loggedInUser = request.auth.credentials;
-      const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
-      const categories = await db.categoryStore.getAllCategories();
-      const idToName = new Map((categories || []).map((c) => [c._id.toString(), c.name || ""]));
+      let placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
 
       if (placemark.imgPublicId) {
         placemark.img = imageStore.getSignedUrl(placemark.imgPublicId);
@@ -20,7 +19,10 @@ export const placemarkController = {
         }
       }
 
-      placemark.categoryName = idToName.get(placemark.categoryId.toString()) || "";
+      // Use utility to enrich the placemark with categoryName
+      placemark = await placemarkUtils.enrichPlacemark(placemark);
+      const categories = await db.categoryStore.getAllCategories();
+
       const viewData = {
         title: "Placemark",
         placemark: placemark,
@@ -35,14 +37,15 @@ export const placemarkController = {
   showEditPage: {
     handler: async function (request, h) {
       const loggedInUser = request.auth.credentials;
-      const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
+      let placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
       if (placemark.userid.toString() !== loggedInUser._id.toString()) {
         return h.redirect("/dashboard");
       }
-      const categoriesRaw = await db.categoryStore.getAllCategories();
-      const categories = (categoriesRaw || []).map((c) => ({ ...c, selected: c._id.toString() === placemark.categoryId.toString() }));
-      const idToName = new Map((categoriesRaw || []).map((c) => [c._id.toString(), c.name || ""]));
-      placemark.categoryName = idToName.get(placemark.categoryId.toString()) || "";
+
+      // Use utility to get categories with the 'selected' flag pre-calculated
+      const categories = await placemarkUtils.getCategoriesWithSelection(placemark.categoryId);
+      placemark = await placemarkUtils.enrichPlacemark(placemark);
+
       const viewData = {
         title: "Edit Placemark",
         placemark: placemark,

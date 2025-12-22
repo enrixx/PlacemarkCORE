@@ -1,5 +1,6 @@
 import { db } from "../models/db.js";
 import { PlacemarkSpecCreate } from "../models/joi-schemas.js";
+import { placemarkUtils } from "../utils/placemark-utils.js";
 
 export const dashboardController = {
   index: {
@@ -12,21 +13,10 @@ export const dashboardController = {
       } else {
         allPlacemarks = await db.placemarkStore.getAllPlacemarks();
       }
-      const categoriesRaw = await db.categoryStore.getAllCategories();
 
-      const categories = (categoriesRaw || []).map((c) => ({ ...c, selected: c._id.toString() === categoryId }));
-      const idToName = new Map((categoriesRaw || []).map((c) => [c._id.toString(), c.name || ""]));
-      const placemarks = await Promise.all(
-        allPlacemarks.map(async (p) => {
-          const user = await db.userStore.getUserById(p.userid);
-          return {
-            ...p,
-            categoryName: p.categoryId ? idToName.get(p.categoryId.toString()) || "" : "",
-            isOwner: p.userid.toString() === loggedInUser._id.toString(),
-            userEmail: user ? user.email : "Unknown User",
-          };
-        })
-      );
+      const categories = await placemarkUtils.getCategoriesWithSelection(categoryId);
+      let placemarks = await placemarkUtils.enrichPlacemarks(allPlacemarks);
+      placemarks = await placemarkUtils.enrichPlacemarksWithUser(placemarks, loggedInUser);
       const viewData = {
         title: "PlacemarkCore Dashboard",
         user: loggedInUser,
@@ -39,8 +29,7 @@ export const dashboardController = {
   addPlacemarkPage: {
     handler: async function (request, h) {
       const loggedInUser = request.auth.credentials;
-      const categoriesRaw = await db.categoryStore.getAllCategories();
-      const categories = (categoriesRaw || []).map((c) => ({ ...c, selected: false }));
+      const categories = await placemarkUtils.getCategoriesWithSelection(null);
       const viewData = {
         title: "Add a new Placemark",
         user: loggedInUser,
@@ -56,18 +45,10 @@ export const dashboardController = {
       failAction: async function (request, h, error) {
         const loggedInUser = request.auth.credentials;
         const allPlacemarks = await db.placemarkStore.getAllPlacemarks();
-        const placemarks = await Promise.all(
-          allPlacemarks.map(async (p) => {
-            const user = await db.userStore.getUserById(p.userid);
-            return {
-              ...p,
-              isOwner: p.userid === loggedInUser._id,
-              userEmail: user ? user.email : "Unknown User",
-            };
-          })
-        );
-        const categoriesRaw = await db.categoryStore.getAllCategories();
-        const categories = (categoriesRaw || []).map((c) => ({ ...c, selected: false }));
+
+        let placemarks = await placemarkUtils.enrichPlacemarks(allPlacemarks);
+        placemarks = await placemarkUtils.enrichPlacemarksWithUser(placemarks, loggedInUser);
+        const categories = await placemarkUtils.getCategoriesWithSelection(null);
         return h
           .view("add-placemark-view", {
             title: "Add Placemark error",
@@ -106,16 +87,7 @@ export const dashboardController = {
       const success = await db.placemarkStore.deletePlacemarkById(request.params.id, loggedInUser._id);
       if (!success) {
         const allPlacemarks = await db.placemarkStore.getAllPlacemarks();
-        const placemarks = await Promise.all(
-          allPlacemarks.map(async (p) => {
-            const user = await db.userStore.getUserById(p.userid);
-            return {
-              ...p,
-              isOwner: p.userid === loggedInUser._id,
-              userEmail: user ? user.email : "Unknown User",
-            };
-          })
-        );
+        const placemarks = await placemarkUtils.enrichPlacemarksWithUser(allPlacemarks, loggedInUser);
         const viewData = {
           title: "PlacemarkCore Dashboard",
           user: loggedInUser,
