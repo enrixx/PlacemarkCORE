@@ -1,8 +1,5 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import { db } from "../models/db.js";
-
-dotenv.config();
 
 export function createToken(user) {
   const payload = {
@@ -10,7 +7,7 @@ export function createToken(user) {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    scope: user.role,
+    role: user.role,
   };
   const options = {
     algorithm: "HS256",
@@ -29,7 +26,7 @@ export function decodeToken(token) {
     const decoded = jwt.verify(token, process.env.COOKIE_PASSWORD);
     userInfo.userId = decoded.id;
     userInfo.email = decoded.email;
-    userInfo.scope = decoded.scope;
+    userInfo.role = decoded.role;
   } catch (e) {
     console.log(e.message);
   }

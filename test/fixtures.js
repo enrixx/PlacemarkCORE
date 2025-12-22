@@ -63,6 +63,7 @@ export const categorySightseeing = {
 
 export const eiffelTower = {
   name: "Eiffel Tower",
+  categoryName: "Sightseeing",
   description: "The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France.",
   longitude: 2.2946,
   latitude: 48.8584,
@@ -71,17 +72,20 @@ export const eiffelTower = {
 export const testPlacemarks = [
   {
     name: "Test Placemark 1",
-    longitude: 123.456,
-    latitude: 789.012,
+    categoryName: "Test Category",
+    longitude: 12.456,
+    latitude: 78.012,
   },
   {
     name: "Test Placemark 2",
-    longitude: 456.789,
-    latitude: 123.012,
+    categoryName: "Test Category",
+    longitude: 45.789,
+    latitude: 12.012,
   },
   {
     name: "Test Placemark 3",
-    longitude: 789.456,
-    latitude: 456.789,
+    categoryName: "Test Category",
+    longitude: 78.456,
+    latitude: 45.789,
   },
 ];

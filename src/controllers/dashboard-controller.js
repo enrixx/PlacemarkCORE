@@ -1,5 +1,5 @@
 import { db } from "../models/db.js";
-import { PlacemarkSpec } from "../models/joi-schemas.js";
+import { PlacemarkSpecCreate } from "../models/joi-schemas.js";
 
 export const dashboardController = {
   index: {
@@ -51,7 +51,7 @@ export const dashboardController = {
   },
   addPlacemark: {
     validate: {
-      payload: PlacemarkSpec,
+      payload: PlacemarkSpecCreate,
       options: { abortEarly: false },
       failAction: async function (request, h, error) {
         const loggedInUser = request.auth.credentials;

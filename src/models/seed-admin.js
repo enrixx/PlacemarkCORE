@@ -1,7 +1,4 @@
-import dotenv from "dotenv";
 import { db } from "./db.js";
-
-dotenv.config();
 
 export async function seedAdmin() {
   if (!db.userStore) {

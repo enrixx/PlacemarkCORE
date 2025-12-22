@@ -1,7 +1,8 @@
 import Boom from "@hapi/boom";
 import { db } from "../models/db.js";
-import { IdSpec, PlacemarkArray, PlacemarkSpec, PlacemarkSpecPlus } from "../models/joi-schemas.js";
+import { IdSpec, PlacemarkArray, PlacemarkSpec, PlacemarkSpecCreate, PlacemarkSpecPlus } from "../models/joi-schemas.js";
 import { validationError } from "./logger.js";
+import { weatherService } from "../utils/weather-service.js";
 
 export const placemarkApi = {
   find: {
@@ -67,7 +68,7 @@ export const placemarkApi = {
     tags: ["api"],
     description: "Create a placemark",
     notes: "Returns the newly created placemark",
-    validate: { payload: PlacemarkSpec, failAction: validationError },
+    validate: { payload: PlacemarkSpecCreate, failAction: validationError },
     response: { schema: PlacemarkSpecPlus, failAction: validationError },
   },
 
@@ -181,5 +182,25 @@ export const placemarkApi = {
     notes: "Returns all placemarks within a specific category",
     validate: { params: { id: IdSpec }, failAction: validationError },
     response: { schema: PlacemarkArray, failAction: validationError },
+  },
+  getWeather: {
+    auth: {
+      strategy: "jwt",
+    },
+    handler: async function (request, h) {
+      try {
+        const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
+        if (!placemark) {
+          return Boom.notFound("No placemark with this id");
+        }
+        return await weatherService.getWeather(placemark.latitude, placemark.longitude);
+      } catch (err) {
+        return Boom.serverUnavailable("Error fetching weather data");
+      }
+    },
+    tags: ["api"],
+    description: "Get weather for a placemark",
+    notes: "Returns weather data",
+    validate: { params: { id: IdSpec }, failAction: validationError },
   },
 };

@@ -1,8 +1,6 @@
 import Mongoose from "mongoose";
-import * as dotenv from "dotenv";
 
 export function connectMongo() {
-  dotenv.config();
 
   Mongoose.connect(process.env.DB_MONGODB);
   const db = Mongoose.connection;
