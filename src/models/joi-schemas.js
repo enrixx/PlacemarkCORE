@@ -25,6 +25,7 @@ export const UserSpecPlus = UserSpec.keys({
 export const UserArray = Joi.array().items(UserSpecPlus).label("UserArray");
 
 export const ImageSpec = Joi.object({
+    _id: IdSpec,
     url: Joi.string().required(),
     publicId: Joi.string().required(),
     uploaderId: IdSpec,
