@@ -2,14 +2,6 @@ import { v4 } from "uuid";
 
 let placemarks = [];
 
-function normalizeImages(obj) {
-  if (!obj.img || obj.img.length === 0) {
-    obj.img = null;
-  }
-  if (!obj.imgPublicId || obj.imgPublicId.length === 0) {
-    obj.imgPublicId = null;
-  }
-}
 
 export const placemarkMemStore = {
   async getAllPlacemarks() {
@@ -19,7 +11,7 @@ export const placemarkMemStore = {
   async addPlacemark(userid, placemark) {
     placemark._id = v4();
     placemark.userid = userid;
-    normalizeImages(placemark);
+
     placemarks.push(placemark);
     return placemark;
   },
@@ -56,19 +48,28 @@ export const placemarkMemStore = {
     return placemarks.filter((placemark) => placemark.userid === userid);
   },
 
-  async updatePlacemark(placemarkId, userId, updatedPlacemark) {
-    const placemark = placemarks.find((p) => p._id === placemarkId && p.userid === userId);
+  async updatePlacemark(placemarkId, updatedPlacemark) {
+    const placemark = placemarks.find((p) => p._id === placemarkId);
     if (!placemark) return false;
-    normalizeImages(updatedPlacemark);
-    if (placemark) {
-      placemark.name = updatedPlacemark.name;
-      placemark.categoryId = updatedPlacemark.categoryId;
-      placemark.description = updatedPlacemark.description;
-      placemark.latitude = updatedPlacemark.latitude;
-      placemark.longitude = updatedPlacemark.longitude;
-      placemark.img = updatedPlacemark.img;
-      placemark.imgPublicId = updatedPlacemark.imgPublicId;
+
+    placemark.name = updatedPlacemark.name;
+    placemark.categoryId = updatedPlacemark.categoryId;
+    placemark.description = updatedPlacemark.description;
+    placemark.latitude = updatedPlacemark.latitude;
+    placemark.longitude = updatedPlacemark.longitude;
+
+    // Handle images array - generate IDs for new images
+    if (updatedPlacemark.images) {
+      placemark.images = updatedPlacemark.images.map(img => {
+        if (!img._id) {
+          return { ...img, _id: v4() };
+        }
+        return img;
+      });
+    } else {
+      placemark.images = placemark.images || [];
     }
+
     return true;
   },
 

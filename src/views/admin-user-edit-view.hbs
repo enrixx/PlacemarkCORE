@@ -2,15 +2,6 @@
 <section class="section">
 	<div class="container">
 		<h1 class="title">{{title}}</h1>
-		{{#if errors}}
-			<div class="notification is-danger">
-				<ul>
-					{{#each errors}}
-						<li>{{this.message}}</li>
-					{{/each}}
-				</ul>
-			</div>
-		{{/if}}
 
 		<form method="post" action="{{#if editUser}}/admin/users/{{editUser._id}}{{else}}/admin/users{{/if}}">
 			<div class="field">

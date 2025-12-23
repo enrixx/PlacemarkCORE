@@ -24,6 +24,12 @@ export const UserSpecPlus = UserSpec.keys({
 
 export const UserArray = Joi.array().items(UserSpecPlus).label("UserArray");
 
+export const ImageSpec = Joi.object({
+    url: Joi.string().required(),
+    publicId: Joi.string().required(),
+    uploaderId: IdSpec,
+}).label("ImageSpec");
+
 export const PlacemarkSpec = Joi.object({
     name: Joi.string().required(),
     categoryName: Joi.string().optional(),
@@ -36,8 +42,7 @@ export const PlacemarkSpec = Joi.object({
         'number.min': 'Longitude must be between -180 and 180',
         'number.max': 'Longitude must be between -180 and 180'
     }),
-    img: Joi.string().optional().allow(null),
-    imgPublicId: Joi.string().optional().allow(null),
+    images: Joi.array().items(ImageSpec).optional(),
 }).label("PlacemarkSpec");
 
 export const PlacemarkSpecCreate = PlacemarkSpec.keys({

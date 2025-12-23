@@ -4,6 +4,7 @@ import { IdSpec, PlacemarkArray, PlacemarkSpec, PlacemarkSpecCreate, PlacemarkSp
 import { validationError } from "./logger.js";
 import { weatherService } from "../utils/weather-service.js";
 import { placemarkUtils } from "../utils/placemark-utils.js";
+import { imageStore } from "../models/image-store.js";
 
 export const placemarkApi = {
   find: {
@@ -85,27 +86,85 @@ export const placemarkApi = {
         if (!placemark) {
           return Boom.notFound("No Placemark with this id");
         }
+
         if (request.auth.credentials._id !== placemark.userid && request.auth.credentials.scope !== "admin") {
           return Boom.forbidden("You do not have permission to edit this placemark");
         }
-        const updatedPlacemark = await db.placemarkStore.updatePlacemark(request.params.id, request.payload);
+
+        // Only update allowed fields - preserve images array
+        const updateData = {
+          name: request.payload.name,
+          description: request.payload.description,
+          latitude: request.payload.latitude,
+          longitude: request.payload.longitude,
+          categoryId: request.payload.categoryId,
+          images: placemark.images // Preserve existing images
+        };
+
+        const updatedPlacemark = await db.placemarkStore.updatePlacemark(request.params.id, updateData);
         if (updatedPlacemark) {
-          const enrichedPlacemark = await placemarkUtils.enrichPlacemark(updatedPlacemark);
+          const enrichedPlacemark = await placemarkUtils.enrichPlacemark(await db.placemarkStore.getPlacemarkById(request.params.id));
           return h.response(enrichedPlacemark).code(200);
         }
         return Boom.badImplementation("error updating placemark");
       } catch (err) {
-        return Boom.serverUnavailable("Database Error");
+        console.error("Error updating placemark:", err);
+        return Boom.badRequest(err.message || "Error updating placemark");
       }
     },
     tags: ["api"],
     description: "Update a placemark",
-    notes: "Updates a specific placemark. Requires user ownership or admin rights.",
-    validate: {
-      params: { id: IdSpec },
-      payload: PlacemarkSpec,
-      failAction: validationError,
+    notes: "Returns the updated placemark. Only the owner or admin can update.",
+    validate: { params: { id: IdSpec }, payload: PlacemarkSpec, failAction: validationError },
+    response: { schema: PlacemarkSpecPlus, failAction: validationError },
+  },
+
+  uploadImage: {
+    auth: {
+      strategy: "jwt",
     },
+    payload: {
+      multipart: true,
+      output: "data",
+      maxBytes: 209715200,
+      parse: true,
+    },
+    handler: async function (request, h) {
+      try {
+        const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
+        if (!placemark) {
+          return Boom.notFound("No Placemark with this id");
+        }
+
+        const file = request.payload.imagefile;
+        if (Object.keys(file).length > 0) {
+          const result = await imageStore.uploadImage(request.payload.imagefile);
+          const newImage = {
+            url: result.url,
+            publicId: result.publicId,
+            uploaderId: request.auth.credentials._id
+          };
+
+          // Initialize images array if it doesn't exist
+          if (!placemark.images) {
+            placemark.images = [];
+          }
+          placemark.images.push(newImage);
+
+          await db.placemarkStore.updatePlacemark(placemark._id, placemark);
+          const enrichedPlacemark = await placemarkUtils.enrichPlacemark(placemark);
+          return h.response(enrichedPlacemark).code(201);
+        }
+        return Boom.badRequest("No image file provided");
+      } catch (err) {
+        console.log(err);
+        return Boom.serverUnavailable("Database Error");
+      }
+    },
+    tags: ["api"],
+    description: "Upload an image to a placemark",
+    notes: "Returns the updated placemark",
+    validate: { params: { id: IdSpec }, failAction: validationError },
     response: { schema: PlacemarkSpecPlus, failAction: validationError },
   },
 
@@ -140,7 +199,7 @@ export const placemarkApi = {
         if (request.auth.credentials._id !== placemark.userid && request.auth.credentials.scope !== "admin") {
           return Boom.forbidden("You do not have permission to delete this placemark");
         }
-        await db.placemarkStore.deletePlacemark(request.params.id);
+        await db.placemarkStore.deletePlacemarkById(request.params.id);
         return h.response().code(204);
       } catch (err) {
         return Boom.serverUnavailable("Database Error");
@@ -150,6 +209,53 @@ export const placemarkApi = {
     description: "Delete a placemark",
     notes: "Deletes a specific placemark. Requires user ownership or admin rights.",
     validate: { params: { id: IdSpec }, failAction: validationError },
+  },
+
+  deleteImage: {
+    auth: {
+      strategy: "jwt",
+    },
+    handler: async function (request, h) {
+      try {
+        const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
+        if (!placemark) {
+          return Boom.notFound("No Placemark with this id");
+        }
+
+        const imageId = request.params.imageId;
+        // Find the image in the array. Since we don't have IDs for images in the array (unless Mongoose adds them automatically, which it does for subdocuments),
+        // we might need to identify by publicId or use the subdocument _id.
+        // Mongoose subdocuments have _id by default.
+
+        const image = placemark.images.id(imageId);
+        if (!image) {
+             return Boom.notFound("No image with this id in the placemark");
+        }
+
+        const userId = request.auth.credentials._id;
+        const isAdmin = request.auth.credentials.scope === "admin";
+        const isOwner = image.uploaderId.toString() === userId;
+
+        if (!isOwner && !isAdmin) {
+          return Boom.forbidden("You do not have permission to delete this image");
+        }
+
+        await imageStore.deleteImage(image.publicId);
+        placemark.images.pull({ _id: imageId });
+        await db.placemarkStore.updatePlacemark(placemark._id, placemark);
+
+        const enrichedPlacemark = await placemarkUtils.enrichPlacemark(placemark);
+        return h.response(enrichedPlacemark).code(200);
+      } catch (err) {
+        console.log(err);
+        return Boom.serverUnavailable("Database Error");
+      }
+    },
+    tags: ["api"],
+    description: "Delete an image from a placemark",
+    notes: "Returns the updated placemark",
+    validate: { params: { id: IdSpec, imageId: IdSpec }, failAction: validationError },
+    response: { schema: PlacemarkSpecPlus, failAction: validationError },
   },
 
   findByUser: {
