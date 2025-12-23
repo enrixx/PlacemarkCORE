@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import { writeFileSync, unlinkSync, existsSync, mkdirSync } from "fs";
+import dotenv from "dotenv";
 
+dotenv.config();
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -53,10 +55,7 @@ export const imageStore = {
         }
 
         const pathParts = urlParts.slice(startIndex);
-        const fullPath = pathParts.join("/").split("?")[0];
-        const publicId = fullPath.replace(/\.[^/.]+$/, "");
-
-        return publicId;
+        return pathParts.join("/").split("?")[0].replace(/\.[^/.]+$/, "");
       }
       return null;
     } catch (err) {
