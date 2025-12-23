@@ -59,7 +59,7 @@ export const placemarkApi = {
                 if (!category) {
                     category = await db.categoryStore.addCategory({name: categoryName});
                 }
-                const placemark = await db.placemarkStore.addPlacemark(request.auth.credentials._id, {
+                const placemark = await db.placemarkStore.addPlacemark(request.auth.credentials.id, {
                     ...request.payload,
                     categoryId: category._id
                 });
@@ -90,7 +90,7 @@ export const placemarkApi = {
                     return Boom.notFound("No Placemark with this id");
                 }
 
-                if (request.auth.credentials._id !== placemark.userid && request.auth.credentials.scope !== "admin") {
+                if (request.auth.credentials.id !== placemark.userid && request.auth.credentials.scope !== "admin") {
                     return Boom.forbidden("You do not have permission to edit this placemark");
                 }
 
@@ -145,7 +145,7 @@ export const placemarkApi = {
                     const newImage = {
                         url: result.url,
                         publicId: result.publicId,
-                        uploaderId: request.auth.credentials._id
+                        uploaderId: request.auth.credentials.id
                     };
 
                     // Initialize images array if it doesn't exist
@@ -199,7 +199,7 @@ export const placemarkApi = {
                 if (!placemark) {
                     return Boom.notFound("No Placemark with this id");
                 }
-                if (request.auth.credentials._id !== placemark.userid && request.auth.credentials.scope !== "admin") {
+                if (request.auth.credentials.id !== placemark.userid && request.auth.credentials.scope !== "admin") {
                     return Boom.forbidden("You do not have permission to delete this placemark");
                 }
                 await db.placemarkStore.deletePlacemarkById(request.params.id);
@@ -235,7 +235,7 @@ export const placemarkApi = {
                     return Boom.notFound("No image with this id in the placemark");
                 }
 
-                const userId = request.auth.credentials._id.toString();
+                const userId = request.auth.credentials.id.toString();
                 const isAdmin = request.auth.credentials.scope === "admin";
                 const isOwner = image.uploaderId.toString() === userId;
 
