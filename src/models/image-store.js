@@ -3,7 +3,6 @@ import { writeFileSync, unlinkSync, existsSync, mkdirSync } from "fs";
 import dotenv from "dotenv";
 
 dotenv.config();
-
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -32,39 +31,6 @@ export const imageStore = {
       if (existsSync(tempPath)) {
         unlinkSync(tempPath);
       }
-    }
-  },
-
-  getSignedUrl: function (publicId) {
-    return cloudinary.url(publicId, {
-      type: "private",
-      sign_url: true,
-      secure: true,
-    });
-  },
-
-  extractPublicId: function (url) {
-    try {
-      const urlParts = url.split("/");
-      const privateIndex = urlParts.findIndex((part) => part === "private");
-
-      if (privateIndex !== -1) {
-        let startIndex = privateIndex + 2;
-
-        if (urlParts[startIndex] && urlParts[startIndex].match(/^v\d+$/)) {
-          startIndex += 1;
-        }
-
-        const pathParts = urlParts.slice(startIndex);
-        const fullPath = pathParts.join("/").split("?")[0];
-        const publicId = fullPath.replace(/\.[^/.]+$/, "");
-
-        return publicId;
-      }
-      return null;
-    } catch (err) {
-      console.error("Error extracting public_id:", err);
-      return null;
     }
   },
 

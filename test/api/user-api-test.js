@@ -2,13 +2,10 @@ import { assert } from "chai";
 import { placecoreService } from "./placemark-service.js";
 import { maggie, maggieCredentials, testUsers, adminCredentials } from "../fixtures.js";
 import { assertSubset } from "../test-utils.js";
-import { seedAdmin } from "../../src/models/seed-admin.js";
 
 suite("User API tests", () => {
-  const storeType = process.env.DB_TYPE || "mem";
   setup(async () => {
     placecoreService.clearAuth();
-    await seedAdmin(storeType);
     await placecoreService.authenticate(adminCredentials);
     await placecoreService.deleteAllUsers();
   });
@@ -24,6 +21,8 @@ suite("User API tests", () => {
       // eslint-disable-next-line no-await-in-loop
       await placecoreService.createUser(testUsers[i]);
     }
+
+    await placecoreService.clearAuth();
     try {
       await placecoreService.deleteAllUsers();
       assert.fail("Unauthorized delete should have failed");
@@ -44,7 +43,6 @@ suite("User API tests", () => {
   });
 
   suiteTeardown(async () => {
-    await seedAdmin(storeType);
     await placecoreService.authenticate(adminCredentials);
     await placecoreService.deleteAllUsers();
   });

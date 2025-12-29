@@ -1,10 +1,10 @@
+import dotenv from "dotenv";
 import Hapi from "@hapi/hapi";
 import Vision from "@hapi/vision";
 import Handlebars from "handlebars";
 import path from "path";
 import { fileURLToPath } from "url";
 import Cookie from "@hapi/cookie";
-import dotenv from "dotenv";
 import Joi from "joi";
 import Inert from "@hapi/inert";
 import jwt from "hapi-auth-jwt2";
@@ -16,6 +16,7 @@ import { accountController } from "./controllers/account-controller.js";
 import { handlebarsHelpers } from "./utils/helpers.js";
 import { validate } from "./api/jwt-utils.js";
 
+dotenv.config();
 const swaggerOptions = {
   info: {
     title: "PlacemarkCORE API",
@@ -34,12 +35,13 @@ const swaggerOptions = {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config();
-
 async function init() {
   const server = Hapi.server({
     port: 3000,
     host: "localhost",
+    routes: {
+      cors: true,
+    },
   });
   await server.register([
     Cookie,

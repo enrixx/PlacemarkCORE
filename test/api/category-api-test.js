@@ -1,13 +1,10 @@
 import { assert } from "chai";
 import { placecoreService } from "./placemark-service.js";
 import { adminCredentials, maggie, maggieCredentials, testCategories } from "../fixtures.js";
-import { seedAdmin } from "../../src/models/seed-admin.js";
 
 suite("Category API tests", () => {
   let user = null;
-  const storeType = process.env.DB_TYPE || "mem";
   setup(async () => {
-    await seedAdmin(storeType);
     await placecoreService.clearAuth();
     await placecoreService.authenticate(adminCredentials);
     await placecoreService.deleteAllCategories();
@@ -61,7 +58,6 @@ suite("Category API tests", () => {
   });
 
   suiteTeardown(async () => {
-    await seedAdmin(storeType);
     await placecoreService.authenticate(adminCredentials);
     await placecoreService.deleteAllCategories();
     await placecoreService.deleteAllUsers();

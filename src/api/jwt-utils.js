@@ -1,14 +1,13 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import { db } from "../models/db.js";
-
-dotenv.config();
 
 export function createToken(user) {
   const payload = {
     id: user._id,
     email: user.email,
-    scope: user.role,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    role: user.role,
   };
   const options = {
     algorithm: "HS256",
@@ -27,14 +26,14 @@ export function decodeToken(token) {
     const decoded = jwt.verify(token, process.env.COOKIE_PASSWORD);
     userInfo.userId = decoded.id;
     userInfo.email = decoded.email;
-    userInfo.scope = decoded.scope;
+    userInfo.role = decoded.role;
   } catch (e) {
     console.log(e.message);
   }
   return userInfo;
 }
 
-export async function validate(decoded, request) {
+export async function validate(decoded) {
   const user = await db.userStore.getUserById(decoded.id);
   if (!user) {
     return { isValid: false };

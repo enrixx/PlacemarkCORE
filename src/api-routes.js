@@ -17,6 +17,10 @@ export const apiRoutes = [
   { method: "PUT", path: "/api/placemarks/{id}", config: placemarkApi.update },
   { method: "DELETE", path: "/api/placemarks", config: placemarkApi.deleteAll },
   { method: "DELETE", path: "/api/placemarks/{id}", config: placemarkApi.deleteOne },
+  { method: "GET", path: "/api/placemarks/{id}/weather", config: placemarkApi.getWeather },
+
+  { method: "POST", path: "/api/placemarks/{id}/images", config: placemarkApi.uploadImage },
+  { method: "DELETE", path: "/api/placemarks/{id}/images/{imageId}", config: placemarkApi.deleteImage },
 
   { method: "GET", path: "/api/users/{id}/placemarks", config: placemarkApi.findByUser },
   { method: "GET", path: "/api/categories/{id}/placemarks", config: placemarkApi.findByCategory },

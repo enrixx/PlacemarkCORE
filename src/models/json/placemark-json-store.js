@@ -1,15 +1,6 @@
 import { v4 } from "uuid";
 import { db } from "./store-utils.js";
 
-function normalizeImages(obj) {
-  if (!obj.img || obj.img.length === 0) {
-    obj.img = null;
-  }
-  if (!obj.imgPublicId || obj.imgPublicId.length === 0) {
-    obj.imgPublicId = null;
-  }
-}
-
 export const placemarkJsonStore = {
   async getAllPlacemarks() {
     await db.read();
@@ -20,7 +11,9 @@ export const placemarkJsonStore = {
     await db.read();
     placemark._id = v4();
     placemark.userid = userid;
-    normalizeImages(placemark);
+    if (!placemark.images) {
+      placemark.images = [];
+    }
     db.data.placemarks.push(placemark);
     await db.write();
     return placemark;
@@ -65,21 +58,29 @@ export const placemarkJsonStore = {
     await db.write();
   },
 
-  async updatePlacemark(placemarkId, userId, updatedPlacemark) {
+  async updatePlacemark(placemarkId, updatedPlacemark) {
     await db.read();
-    const placemark = db.data.placemarks.find((p) => p._id === placemarkId && p.userid === userId);
+    const placemark = db.data.placemarks.find((p) => p._id === placemarkId);
     if (!placemark) return false;
-    normalizeImages(updatedPlacemark);
-    if (placemark) {
-      placemark.name = updatedPlacemark.name;
-      placemark.categoryId = updatedPlacemark.categoryId;
-      placemark.description = updatedPlacemark.description;
-      placemark.latitude = updatedPlacemark.latitude;
-      placemark.longitude = updatedPlacemark.longitude;
-      placemark.img = updatedPlacemark.img;
-      placemark.imgPublicId = updatedPlacemark.imgPublicId;
-      await db.write();
+    placemark.name = updatedPlacemark.name;
+    placemark.categoryId = updatedPlacemark.categoryId;
+    placemark.description = updatedPlacemark.description;
+    placemark.latitude = updatedPlacemark.latitude;
+    placemark.longitude = updatedPlacemark.longitude;
+
+    // Handle images array - generate IDs for new images
+    if (updatedPlacemark.images) {
+      placemark.images = updatedPlacemark.images.map(img => {
+        if (!img._id) {
+          return { ...img, _id: v4() };
+        }
+        return img;
+      });
+    } else {
+      placemark.images = placemark.images || [];
     }
+
+    await db.write();
     return true;
   },
 

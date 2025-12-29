@@ -1,5 +1,13 @@
-export const serviceUrl = "http://localhost:3000";
+import dotenv from "dotenv";
 
+dotenv.config();
+
+export const serviceUrl = process.env.SERVICE_URL;
+
+export const adminCredentials = {
+    email: process.env.ADMIN_EMAIL,
+    password: process.env.ADMIN_PASSWORD,
+};
 export const maggie = {
   firstName: "Maggie",
   lastName: "Simpson",
@@ -10,19 +18,6 @@ export const maggie = {
 export const maggieCredentials = {
   email: "maggie@simpson.com",
   password: "secret",
-};
-
-export const admin = {
-  firstName: "Admin",
-  lastName: "User",
-  email: "admin@example.com",
-  password: "admin",
-  role: "admin",
-};
-
-export const adminCredentials = {
-  email: "admin@example.com",
-  password: "admin",
 };
 
 export const testUsers = [
@@ -68,6 +63,7 @@ export const categorySightseeing = {
 
 export const eiffelTower = {
   name: "Eiffel Tower",
+  categoryName: "Sightseeing",
   description: "The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France.",
   longitude: 2.2946,
   latitude: 48.8584,
@@ -76,17 +72,20 @@ export const eiffelTower = {
 export const testPlacemarks = [
   {
     name: "Test Placemark 1",
-    longitude: 123.456,
-    latitude: 789.012,
+    categoryName: "Test Category",
+    longitude: 12.456,
+    latitude: 78.012,
   },
   {
     name: "Test Placemark 2",
-    longitude: 456.789,
-    latitude: 123.012,
+    categoryName: "Test Category",
+    longitude: 45.789,
+    latitude: 12.012,
   },
   {
     name: "Test Placemark 3",
-    longitude: 789.456,
-    latitude: 456.789,
+    categoryName: "Test Category",
+    longitude: 78.456,
+    latitude: 45.789,
   },
 ];

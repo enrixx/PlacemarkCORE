@@ -137,9 +137,6 @@ export const adminController = {
       const allPlacemarks = await db.placemarkStore.getAllPlacemarks();
       const placemarks = await Promise.all(
         allPlacemarks.map(async (p) => {
-          if (p.imgPublicId) {
-            p.img = imageStore.getSignedUrl(p.imgPublicId);
-          }
           const user = await db.userStore.getUserById(p.userid);
           return {
             ...p,
