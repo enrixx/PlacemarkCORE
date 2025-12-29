@@ -1,5 +1,6 @@
 import { db } from "../models/db.js";
 import { UserCredentialsSpec, UserSpec } from "../models/joi-schemas.js";
+import { comparePassword } from "../utils/password-utils.js";
 
 export const accountController = {
   index: {
@@ -57,7 +58,7 @@ export const accountController = {
     handler: async function (request, h) {
       const { email, password } = request.payload;
       const user = await db.userStore.getUserByEmail(email);
-      if (!user || user.password !== password) {
+      if (!user || !(await comparePassword(password, user.password))) {
         return h.view("login-view", { title: "Log in error", errors: [{ message: "Invalid email or password" }] });
       }
       request.cookieAuth.set({ id: user._id });

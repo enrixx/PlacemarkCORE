@@ -1,4 +1,5 @@
 import { v4 } from "uuid";
+import { hashPassword } from "../../utils/password-utils.js";
 
 let users = [];
 
@@ -10,6 +11,10 @@ export const userMemStore = {
   async addUser(user) {
     user._id = v4();
     user.role = user.role || "user";
+    // Hash password before saving
+    if (user.password) {
+      user.password = await hashPassword(user.password);
+    }
     users.push(user);
     return user;
   },
@@ -42,7 +47,10 @@ export const userMemStore = {
       user.firstName = updatedUser.firstName;
       user.lastName = updatedUser.lastName;
       user.email = updatedUser.email;
-      user.password = updatedUser.password;
+      // Hash password if it's being updated
+      if (updatedUser.password) {
+        user.password = await hashPassword(updatedUser.password);
+      }
       user.role = updatedUser.role || "user";
     }
   },
