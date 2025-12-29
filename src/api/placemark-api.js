@@ -209,7 +209,7 @@ export const placemarkApi = {
                 if (request.auth.credentials.id !== placemark.userid && request.auth.credentials.scope !== "admin") {
                     return Boom.forbidden("You do not have permission to delete this placemark");
                 }
-                await db.placemarkStore.deletePlacemarkById(request.params.id);
+                await db.placemarkStore.deletePlacemarkById(request.params.id, request.auth.credentials.id);
                 return h.response().code(204);
             } catch (err) {
                 return Boom.serverUnavailable("Database Error");
