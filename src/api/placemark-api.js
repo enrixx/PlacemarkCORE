@@ -1,6 +1,6 @@
 import Boom from "@hapi/boom";
 import {db} from "../models/db.js";
-import {IdSpec, PlacemarkArray, PlacemarkSpec, PlacemarkSpecCreate, PlacemarkSpecPlus} from "../models/joi-schemas.js";
+import {IdSpec, PlacemarkArray, PlacemarkSpec, PlacemarkSpecPlus} from "../models/joi-schemas.js";
 import {validationError} from "./logger.js";
 import {weatherService} from "../utils/weather-service.js";
 import {placemarkUtils} from "../utils/placemark-utils.js";
@@ -75,7 +75,7 @@ export const placemarkApi = {
         tags: ["api"],
         description: "Create a placemark",
         notes: "Returns the newly created placemark",
-        validate: {payload: PlacemarkSpecCreate, failAction: validationError},
+        validate: {payload: PlacemarkSpec, failAction: validationError},
         response: {schema: PlacemarkSpecPlus, failAction: validationError},
     },
 
@@ -94,13 +94,20 @@ export const placemarkApi = {
                     return Boom.forbidden("You do not have permission to edit this placemark");
                 }
 
+                const categoryNameRaw = request.payload.categoryName;
+                const categoryName = categoryNameRaw.charAt(0).toUpperCase() + categoryNameRaw.slice(1).toLowerCase();
+                let category = await db.categoryStore.getCategoryByName(categoryName);
+                if (!category) {
+                    category = await db.categoryStore.addCategory({name: categoryName});
+                }
+
                 // Only update allowed fields - preserve images array
                 const updateData = {
                     name: request.payload.name,
                     description: request.payload.description,
                     latitude: request.payload.latitude,
                     longitude: request.payload.longitude,
-                    categoryId: request.payload.categoryId,
+                    categoryId: category._id,
                     images: placemark.images // Preserve existing images
                 };
 

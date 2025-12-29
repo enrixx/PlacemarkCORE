@@ -33,8 +33,8 @@ export const ImageSpec = Joi.object({
 
 export const PlacemarkSpec = Joi.object({
     name: Joi.string().required(),
-    categoryName: Joi.string().optional(),
-    description: Joi.string().optional(),
+    categoryName: Joi.string().required(),
+    description: Joi.string().allow("").optional(),
     latitude: Joi.number().min(-90).max(90).required().messages({
         'number.min': 'Latitude must be between -90 and 90',
         'number.max': 'Latitude must be between -90 and 90'
@@ -45,10 +45,6 @@ export const PlacemarkSpec = Joi.object({
     }),
     images: Joi.array().items(ImageSpec).optional(),
 }).label("PlacemarkSpec");
-
-export const PlacemarkSpecCreate = PlacemarkSpec.keys({
-    categoryName: Joi.string().required(),
-}).label("PlacemarkSpecCreate");
 
 export const PlacemarkSpecPlus = PlacemarkSpec.keys({
     categoryId: IdSpec,
