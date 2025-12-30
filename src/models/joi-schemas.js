@@ -7,6 +7,12 @@ export const UserCredentialsSpec = Joi.object({
     password: Joi.string().example("secret").required(),
 }).label("UserCredentials");
 
+export const UserOAuthSpec = Joi.object({
+    email: Joi.string().email().example("homer@simpson.com").required(),
+    firstName: Joi.string().example("Homer").required(),
+    lastName: Joi.string().example("Simpson").required(),
+}).label("UserOAuth");
+
 export const UserSpec = UserCredentialsSpec.keys({
     firstName: Joi.string().example("Homer").required(),
     lastName: Joi.string().example("Simpson").required(),
