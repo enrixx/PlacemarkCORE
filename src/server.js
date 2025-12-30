@@ -38,7 +38,7 @@ const __dirname = path.dirname(__filename);
 async function init() {
   const server = Hapi.server({
     port: 3000,
-    host: "localhost",
+    host: "0.0.0.0",
     routes: {
       cors: true,
     },
