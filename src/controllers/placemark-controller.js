@@ -185,7 +185,6 @@ export const placemarkController = {
 
         return h.redirect(`/placemark/${placemark._id}`);
       } catch (err) {
-        console.error("Error deleting image:", err);
         return returnError(`Error deleting image: ${err.message}`);
       }
     },

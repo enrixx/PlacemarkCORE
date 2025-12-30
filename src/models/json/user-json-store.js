@@ -1,5 +1,6 @@
 import { v4 } from "uuid";
 import { db } from "./store-utils.js";
+import { hashPassword } from "../../utils/password-utils.js";
 
 export const userJsonStore = {
   async getAllUsers() {
@@ -11,6 +12,9 @@ export const userJsonStore = {
     await db.read();
     user._id = v4();
     user.role = user.role || "user";
+    if (user.password) {
+      user.password = await hashPassword(user.password);
+    }
     db.data.users.push(user);
     await db.write();
     return user;
@@ -51,7 +55,10 @@ export const userJsonStore = {
       user.firstName = updatedUser.firstName;
       user.lastName = updatedUser.lastName;
       user.email = updatedUser.email;
-      user.password = updatedUser.password;
+      // Hash password if it's being updated
+      if (updatedUser.password) {
+        user.password = await hashPassword(updatedUser.password);
+      }
       user.role = updatedUser.role || "user";
     }
     await db.write();

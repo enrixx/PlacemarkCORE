@@ -118,7 +118,6 @@ export const placemarkApi = {
                 }
                 return Boom.badImplementation("error updating placemark");
             } catch (err) {
-                console.error("Error updating placemark:", err);
                 return Boom.badRequest(err.message || "Error updating placemark");
             }
         },
@@ -167,7 +166,6 @@ export const placemarkApi = {
                 }
                 return Boom.badRequest("No image file provided");
             } catch (err) {
-                console.log(err);
                 return Boom.serverUnavailable("Database Error");
             }
         },
@@ -259,7 +257,6 @@ export const placemarkApi = {
                 const enrichedPlacemark = await placemarkUtils.enrichPlacemark(placemark);
                 return h.response(enrichedPlacemark).code(200);
             } catch (err) {
-                console.error("Error deleting image:", err);
                 return Boom.serverUnavailable("Database Error");
             }
         },

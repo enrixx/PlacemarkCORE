@@ -1,4 +1,5 @@
 import { User } from "./user.js";
+import { hashPassword } from "../../utils/password-utils.js";
 
 export const userMongoStore = {
   async getAllUsers() {
@@ -18,6 +19,10 @@ export const userMongoStore = {
 
   async addUser(user) {
     user.role = user.role || "user";
+    // Hash password before saving
+    if (user.password) {
+      user.password = await hashPassword(user.password);
+    }
     const newUser = new User(user);
     const userObj = await newUser.save();
     return this.getUserById(userObj._id);
@@ -47,7 +52,10 @@ export const userMongoStore = {
       user.firstName = updatedUser.firstName;
       user.lastName = updatedUser.lastName;
       user.email = updatedUser.email;
-      if (updatedUser.password) user.password = updatedUser.password;
+      // Hash password if it's being updated
+      if (updatedUser.password) {
+        user.password = await hashPassword(updatedUser.password);
+      }
       user.role = updatedUser.role || "user";
       await user.save();
     }

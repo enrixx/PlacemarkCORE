@@ -13,7 +13,7 @@ export function createToken(user) {
     algorithm: "HS256",
     expiresIn: "1h",
   };
-  const secret = process.env.COOKIE_PASSWORD || process.env.cookie_password;
+  const secret = process.env.COOKIE_PASSWORD;
   if (!secret) {
     throw new Error("JWT secret not configured");
   }
