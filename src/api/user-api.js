@@ -161,9 +161,14 @@ export const userApi = {
                         lastName: request.payload.lastName,
                         email: request.payload.email,
                         password: crypto.randomBytes(16).toString("hex"),
-                        role: "user"
+                        role: "user",
+                        isOAuth: true
                     };
                     user = await db.userStore.addUser(userData);
+                } else if (!user.isOAuth) {
+                    // Mark existing user as OAuth user
+                    await db.userStore.updateUser(user._id, { isOAuth: true });
+                    user.isOAuth = true;
                 }
                 const token = createToken(user);
                 return h.response({success: true, token: token}).code(201);
@@ -205,7 +210,18 @@ export const userApi = {
                     }
                 }
 
-                await db.userStore.updateUser(userId, request.payload);
+                // Preserve role - only allow role changes if admin is updating another user
+                const updates = { ...request.payload };
+                if (!updates.role) {
+                    updates.role = user.role;
+                }
+
+                // If this is an OAuth user changing password, clear the OAuth flag
+                if (updates.password && user.isOAuth) {
+                    updates.isOAuth = false;
+                }
+
+                await db.userStore.updateUser(userId, updates);
                 return await db.userStore.getUserById(userId);
             } catch (err) {
                 return Boom.serverUnavailable("Database Error");

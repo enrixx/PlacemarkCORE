@@ -8,6 +8,7 @@ const userSchema = new Schema({
   email: String,
   password: String,
   role: String,
+  isOAuth: { type: Boolean, default: false },
 });
 
 export const User = Mongoose.model("User", userSchema);

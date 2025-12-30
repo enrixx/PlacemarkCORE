@@ -24,6 +24,7 @@ export const UserSpecForAdminCreate = UserSpec.keys({
 
 export const UserSpecPlus = UserSpec.keys({
     role: Joi.string().valid("user", "admin").required(),
+    isOAuth: Joi.boolean(),
     _id: IdSpec,
     __v: Joi.number(),
 }).label("UserDetailsPlus");
