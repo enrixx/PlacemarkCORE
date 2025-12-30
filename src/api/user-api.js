@@ -165,10 +165,6 @@ export const userApi = {
                         isOAuth: true
                     };
                     user = await db.userStore.addUser(userData);
-                } else if (!user.isOAuth) {
-                    // Mark existing user as OAuth user
-                    await db.userStore.updateUser(user._id, { isOAuth: true });
-                    user.isOAuth = true;
                 }
                 const token = createToken(user);
                 return h.response({success: true, token: token}).code(201);
@@ -190,7 +186,7 @@ export const userApi = {
         handler: async function (request, h) {
             try {
                 const userId = request.params.id;
-                const loggedInUserId = request.auth.credentials.id;
+                const loggedInUserId = request.auth.credentials.id.toString();
 
                 // Users can only update their own profile unless they're admin
                 if (userId !== loggedInUserId && request.auth.credentials.scope !== "admin") {

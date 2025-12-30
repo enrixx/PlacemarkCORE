@@ -8,6 +8,7 @@ export function createToken(user) {
     firstName: user.firstName,
     lastName: user.lastName,
     role: user.role,
+    isOAuth: user.isOAuth,
   };
   const options = {
     algorithm: "HS256",

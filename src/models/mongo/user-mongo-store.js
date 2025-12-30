@@ -49,14 +49,15 @@ export const userMongoStore = {
   async updateUser(id, updatedUser) {
     const user = await User.findOne({ _id: id });
     if (user) {
-      user.firstName = updatedUser.firstName;
-      user.lastName = updatedUser.lastName;
-      user.email = updatedUser.email;
+      if (updatedUser.firstName) user.firstName = updatedUser.firstName;
+      if (updatedUser.lastName) user.lastName = updatedUser.lastName;
+      if (updatedUser.email) user.email = updatedUser.email;
       // Hash password if it's being updated
       if (updatedUser.password) {
         user.password = await hashPassword(updatedUser.password);
       }
-      user.role = updatedUser.role || "user";
+      if (updatedUser.role) user.role = updatedUser.role;
+      if (typeof updatedUser.isOAuth === 'boolean') user.isOAuth = updatedUser.isOAuth;
       await user.save();
     }
   },
