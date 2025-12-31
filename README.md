@@ -1,105 +1,120 @@
-# PlacemarkCORE
+# PlacemarkCORE ⚙️
 
-A simple web application for managing and sharing geographical placemarks. Users can register, log in, and create placemarks with a name and coordinates. They can view placemarks created by all users but can only delete their own.
+PlacemarkCORE is the robust backend engine and administrative hub for the Placemark ecosystem. It provides a comprehensive REST API for the Svelte frontend while offering a built-in Admin Dashboard for direct data management.
 
-### Configuration
+### 🚀 Live Deployments
+* **PlacemarkCORE (API & Admin):** Hosted on **Render** 👉 [https://placemarkcore-hm5j.onrender.com/](https://placemarkcore-hm5j.onrender.com/)
+* **Placemark-Svelte (Frontend):** Hosted on **Netlify** 👉 [https://enricohu.netlify.app/](https://enricohu.netlify.app/)
 
-This project uses environment variables for configuration. You need to create a `.env` file in the root directory of the project to set up your database, security keys, and cloud storage.
+---
 
-1. Create the file by copying the provided example:
-   ```sh
-   cp .env.example .env
-   ```
-    (On Windows, you can just manually duplicate the file and rename it).
+## 🛠️ Role in the Ecosystem
 
-2. Open the .env file and update the values.
+PlacemarkCORE serves two primary purposes:
+1.  **RESTful API:** Powers the [Placemark-Svelte](https://github.com/enrixx/Placemark-Svelte) frontend with secure endpoints for location data, weather integration, and image management.
+2.  **Admin Dashboard:** A server-side rendered interface built with **Handlebars** and **Easy UI** that allows administrators to manage users and placemarks directly.
 
-3. OPTIONAL FOR LOCALHOST MONGODB:
-   ```sh
-   mkdir db
-   mongod --dbpath db
-   ```
+## 🌟 Features
 
-## Features
+-   **Secure API:** JWT-based authentication and Joi validation for all endpoints.
+-   **Admin Dashboard:** High-level overview and management of the entire platform.
+-   **Multi-Store Support:** Flexible data persistence using MongoDB (Mongoose), JSON (LowDB), or In-Memory stores for testing.
+-   **Image Handling:** Integrated with Cloudinary for robust image hosting.
+-   **Interactive Maps:** Geographic data visualization for placemarks.
+-   **Input Validation:** Strict schema validation using Joi to ensure data integrity.
+-   **Testing:** Comprehensive test suite using Mocha and Chai for reliable deployments.
 
--   **User Authentication:** Secure user registration and login.
--   **Placemark Management:** Create, view, and delete placemarks.
--   **Shared View:** View placemarks from all users on a central dashboard.
--   **Ownership Control:** Users can only delete the placemarks they have created.
--   **Data Persistence:** Supports both an in-memory store for quick testing and a JSON file for data persistence.
--   **Input Validation:** Uses Joi to validate all incoming data.
--   **Testing:** Includes a comprehensive test suite using Mocha and Chai.
+## 📖 API Documentation
 
-## Technologies Used
+PlacemarkCORE includes built-in interactive documentation using **Hapi-Swagger**. This allows developers to test endpoints, view required parameters, and understand response schemas directly from the browser.
 
--   **Backend:** [Hapi.js](https://hapi.dev/)
--   **Frontend Templating:** [Handlebars.js](https://handlebarsjs.com/)
--   **Testing:** [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/)
--   **Data Validation:** [Joi](https://joi.dev/)
--   **Runtime:** [Node.js](https://nodejs.org/)
+* **Access Documentation:** When running locally, navigate to `/documentation` (e.g., `http://localhost:3000/documentation`).
+* **Standards:** Built using OpenAPI (Swagger) specifications.
+* **Endpoints covered:** User Authentication, Placemark CRUD, Category management, and Image uploads.
 
-## Getting Started
+## 🧰 Technologies Used
 
-Follow these instructions to get a copy of the project up and running on your local machine.
+-   **Runtime:** Node.js
+-   **Framework:** [Hapi.js](https://hapi.dev/)
+-   **Frontend Templating:** [Handlebars.js](https://handlebarsjs.com/) (for Admin views)
+-   **UI Components:** Easy UI
+-   **Database:** MongoDB (Atlas) / LowDB (JSON)
+-   **Testing:** Mocha & Chai
+-   **Validation:** Joi
+-   **API Docs:** Hapi-Swagger
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-
-Make sure you have [Node.js](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/get-npm) installed on your system.
+* [Node.js](https://nodejs.org/) (v18+)
+* [npm](https://www.npmjs.com/)
+* MongoDB instance (Local or Atlas)
 
 ### Installation
 
-1.  Clone the repository:
-    ```sh
-    git clone https://github.com/enrixx/PlacemarkCORE.git
-    ```
-2.  Navigate to the project directory:
-    ```sh
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/enrixx/PlacemarkCORE.git](https://github.com/enrixx/PlacemarkCORE.git)
     cd PlacemarkCORE
     ```
-3.  Install the required dependencies:
-    ```sh
+
+2.  **Configuration:**
+    Create a `.env` file in the root directory by copying the example:
+    ```bash
+    cp .env.example .env
+    ```
+    *(Note: If you are on Windows Command Prompt and `cp` does not work, simply copy the file manually and rename it to `.env`)*
+
+    Update the `.env` file with your details:
+    * `db`: Your MongoDB connection string.
+    * `cookie_password`: A secure string for session cookies.
+    * `cloudinary_name`, `key`, `secret`: Your image hosting credentials.
+
+3.  **Install dependencies:**
+    ```bash
     npm install
     ```
 
-### Running the Application
+## Running the Application
 
-To start the server, run the following command:
+**Development Mode (with Nodemon for auto-restart):**
+```bash
+npm run dev
+ ```
+ ## Production Mode
 
-```sh
+To start the application in production mode, run:
+
+```bash
 npm start
 ```
 
-If you dont want to manual restart the application, after changes you can use nodemon:
+The application and Admin Dashboard will be available at http://localhost:3000.
 
-```sh
-npm run dev
+## Running Tests
+
+Dont forget to run the server or else the api tests wont work.
+
+```bash
+npm run test
 ```
 
-The application will be available at `http://localhost:3000`.
+## 📂 Project Structure
 
-### Running Tests
-
-To run the test suite, use the following command:
-
-```sh
-npm test
-```
-
-This will execute all the unit tests for the application.
-
-## Project Structure
-
-```
+```plaintext
 .
 ├── src
-│   ├── controllers/  # Route handlers for different parts of the application
-│   ├── models/       # Data stores (in-memory, JSON) and Joi validation schemas
-│   ├── views/        # Handlebars templates and partials
-│   ├── server.js     # Main server configuration and startup
-│   └── web-routes.js # Route definitions
-├── test
-│   ├── fixtures.js
-│   └── *.js          # Test files for models and controllers
+│   ├── api/            # REST API endpoints (used by Svelte frontend)
+│   ├── controllers/    # Route handlers for the Admin Dashboard
+│   ├── models/         # Database schemas and validation logic
+│   ├── views/          # Handlebars templates and Easy UI layouts
+│   ├── server.js       # Main server configuration
+│   ├── web-routes.js   # Admin and Web route definitions
+│   └── api-routes.js   # API route definitions
+├── test/               # Mocha & Chai test files
+│   ├── fixtures.js     # Test data
+│   └── *_test.js       # Model and Controller tests
 └── package.json
 ```
-
