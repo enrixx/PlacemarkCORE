@@ -88,7 +88,7 @@ npm run dev
 To start the application in production mode, run:
 
 ```bash
-npm start
+npm run start
 ```
 
 The application and Admin Dashboard will be available at http://localhost:3000.
