@@ -265,17 +265,31 @@ export const userApi = {
           `This link will expire in 1 hour.\n\n` +
           `If you did not request this, please ignore this email and your password will remain unchanged.\n`;
 
-        const templatePath = path.join(__dirname, "../views/email/email.html");
-        let html = fs.readFileSync(templatePath, "utf8");
-        html = html.replace(/{{resetUrl}}/g, resetUrl);
-        html = html.replace(/{{firstName}}/g, user.firstName);
+        const templatePath = path.resolve(__dirname, "../views/email/email.html");
+        let html = "";
 
-        await sendEmail(user.email, "Password Reset", text, html);
+        try {
+            html = fs.readFileSync(templatePath, "utf8");
+            html = html.replace(/{{resetUrl}}/g, resetUrl);
+            html = html.replace(/{{firstName}}/g, user.firstName);
+        } catch (fileErr) {
+            console.error("Error reading email template at:", templatePath, fileErr);
+            html = `
+              <p>Please reset your password by clicking this link: <a href="${resetUrl}">${resetUrl}</a></p>
+            `;
+        }
+
+        try {
+          await sendEmail(user.email, "Password Reset - Placemark", text, html);
+        } catch (emailErr) {
+            console.error("Failed to send reset email:", emailErr);
+            return Boom.serverUnavailable("Email service is currently unavailable. Please try again later.");
+        }
 
         return { message: "If that email address is in our database, we will send you an email to reset your password." };
       } catch (err) {
-        console.log(err);
-        return Boom.serverUnavailable("Error sending email");
+        console.error("Forgot Password Error:", err);
+        return Boom.serverUnavailable("Error processing request");
       }
     },
     tags: ["api"],
