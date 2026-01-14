@@ -35,8 +35,6 @@ const swaggerOptions = {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log(process.env.PRODUCTION);
-
 async function init() {
   const server = Hapi.server({
     port: 3000,
