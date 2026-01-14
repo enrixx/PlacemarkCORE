@@ -268,6 +268,7 @@ export const userApi = {
         const templatePath = path.join(__dirname, "../views/email/email.html");
         let html = fs.readFileSync(templatePath, "utf8");
         html = html.replace(/{{resetUrl}}/g, resetUrl);
+        html = html.replace(/{{firstName}}/g, user.firstName);
 
         await sendEmail(user.email, "Password Reset", text, html);
 
