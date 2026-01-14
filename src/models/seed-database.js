@@ -15,6 +15,13 @@ export async function seedDatabase() {
       return;
     }
 
+    // Check if database is already seeded
+    const existingCategories = await db.categoryStore.getAllCategories();
+    if (existingCategories.length > 0) {
+      console.log("Database already seeded. Skipping seed process.");
+      return;
+    }
+
     const categoryMap = {};
 
     for (const cat of seedCategories) {
