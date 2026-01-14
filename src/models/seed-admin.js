@@ -28,7 +28,7 @@ export async function seedAdmin() {
       lastName,
       email,
       password,
-      role: "admin"
+      role: "admin",
     };
 
     await db.userStore.addUser(admin);

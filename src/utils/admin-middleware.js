@@ -13,4 +13,3 @@ export const adminMiddleware = {
     return h.redirect("/dashboard").takeover();
   },
 };
-

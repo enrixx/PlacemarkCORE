@@ -29,23 +29,22 @@ export async function seedDatabase() {
       const categoryId = categoryMap[pm.categoryName];
       if (categoryId) {
         const existingPlacemarks = await db.placemarkStore.getPlacemarksByUserId(user._id);
-        const exists = existingPlacemarks.find(p => p.name === pm.name);
+        const exists = existingPlacemarks.find((p) => p.name === pm.name);
 
         if (!exists) {
-            const newPlacemark = {
-                name: pm.name,
-                description: pm.description,
-                latitude: pm.latitude,
-                longitude: pm.longitude,
-                categoryId: categoryId,
-                categoryName: pm.categoryName,
-            };
-            await db.placemarkStore.addPlacemark(user._id, newPlacemark);
+          const newPlacemark = {
+            name: pm.name,
+            description: pm.description,
+            latitude: pm.latitude,
+            longitude: pm.longitude,
+            categoryId: categoryId,
+            categoryName: pm.categoryName,
+          };
+          await db.placemarkStore.addPlacemark(user._id, newPlacemark);
         }
       }
     }
     console.log("Database seeding completed.");
-
   } catch (e) {
     console.error("Error seeding database:", e);
   }

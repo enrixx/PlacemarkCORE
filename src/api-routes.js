@@ -5,6 +5,8 @@ import { categoryApi } from "./api/category-api.js";
 export const apiRoutes = [
   { method: "POST", path: "/api/users/authenticate", config: userApi.authenticate },
   { method: "POST", path: "/api/users/oauth", config: userApi.authenticateOAuth },
+  { method: "POST", path: "/api/users/forgot-password", config: userApi.forgotPassword },
+  { method: "POST", path: "/api/users/reset-password", config: userApi.resetPassword },
 
   { method: "GET", path: "/api/users", config: userApi.find },
   { method: "POST", path: "/api/users", config: userApi.create },
