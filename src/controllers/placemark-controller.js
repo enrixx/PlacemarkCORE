@@ -88,7 +88,7 @@ export const placemarkController = {
           const newImage = {
             url: imageData.url,
             publicId: imageData.publicId,
-            uploaderId: loggedInUser._id
+            uploaderId: loggedInUser._id,
           };
 
           if (!placemark.images) {
@@ -102,7 +102,7 @@ export const placemarkController = {
             description: placemark.description,
             latitude: placemark.latitude,
             longitude: placemark.longitude,
-            images: placemark.images
+            images: placemark.images,
           };
           await db.placemarkStore.updatePlacemark(placemark._id, updateData);
         } else {
@@ -156,7 +156,7 @@ export const placemarkController = {
           return returnError("No images found in this placemark.");
         }
 
-        const image = placemark.images.find(img => img._id && img._id.toString() === imageId);
+        const image = placemark.images.find((img) => img._id && img._id.toString() === imageId);
 
         if (!image) {
           return returnError("Image not found.");
@@ -171,7 +171,7 @@ export const placemarkController = {
 
         await imageStore.deleteImage(image.publicId);
 
-        placemark.images = placemark.images.filter(img => img._id.toString() !== imageId);
+        placemark.images = placemark.images.filter((img) => img._id.toString() !== imageId);
 
         const updateData = {
           name: placemark.name,
@@ -179,7 +179,7 @@ export const placemarkController = {
           description: placemark.description,
           latitude: placemark.latitude,
           longitude: placemark.longitude,
-          images: placemark.images
+          images: placemark.images,
         };
         await db.placemarkStore.updatePlacemark(placemark._id, updateData);
 

@@ -15,8 +15,8 @@
   "type": "module",
   "main": "src/server.js",
   "scripts": {
-    "dev": "./node_modules/.bin/nodemon  src/server.js",
-    "start": "node src/server.js",
+    "dev": "PRODUCTION=false ./node_modules/.bin/nodemon  src/server.js",
+    "start": "PRODUCTION=true node src/server.js",
     "lint": "./node_modules/.bin/eslint . --ext .js",
     "test": "./node_modules/mocha/bin/_mocha --ui tdd test/**/**.js -exit"
   },
@@ -47,6 +47,7 @@
     "jsonwebtoken": "^9.0.2",
     "lowdb": "^7.0.1",
     "mongoose": "^9.0.0",
+    "nodemailer": "^7.0.12",
     "uuid": "^13.0.0"
   },
   "engines": {

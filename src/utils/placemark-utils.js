@@ -21,23 +21,22 @@ export const placemarkUtils = {
   },
 
   async getCategoriesWithSelection(selectedId) {
-      const categoriesRaw = await db.categoryStore.getAllCategories();
-      return (categoriesRaw || []).map((c) => ({ ...c, selected: c._id.toString() === selectedId?.toString() }));
+    const categoriesRaw = await db.categoryStore.getAllCategories();
+    return (categoriesRaw || []).map((c) => ({ ...c, selected: c._id.toString() === selectedId?.toString() }));
   },
 
   async enrichPlacemarksWithUser(placemarks, loggedInUser) {
     if (!placemarks) return [];
 
     return Promise.all(
-        placemarks.map(async (p) => {
-          const user = await db.userStore.getUserById(p.userid);
-          return {
-            ...p,
-            isOwner: p.userid.toString() === loggedInUser._id.toString(),
-            userEmail: user ? user.email : "Unknown User",
-          };
-        })
+      placemarks.map(async (p) => {
+        const user = await db.userStore.getUserById(p.userid);
+        return {
+          ...p,
+          isOwner: p.userid.toString() === loggedInUser._id.toString(),
+          userEmail: user ? user.email : "Unknown User",
+        };
+      })
     );
   },
 };
-

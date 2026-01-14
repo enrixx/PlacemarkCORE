@@ -1,34 +1,34 @@
 <table class="table is-fullwidth">
-	<thead>
-	<tr>
-		<th>Name</th>
-		<th>Category</th>
-		<th>Created By</th>
-		<th></th>
-		<th></th>
-	</tr>
-	</thead>
-	<tbody>
-	{{#each placemarks}}
-		<tr class="placemark-row" data-id="{{_id}}">
-			<td>
-				{{name}}
-			</td>
-			<td>{{categoryName}}</td>
-			<td>{{userEmail}}</td>
-			<td>
-				<a href="/placemark/{{_id}}" class="ui icon button">
-					<i class="fa-solid fa-circle-info"></i>
-				</a>
-			</td>
-			<td>
-				{{#if isOwner}}
-					<a href="/dashboard/deleteplacemark/{{_id}}" class="ui icon button">
-						<i class="fas fa-trash"></i>
-					</a>
-				{{/if}}
-			</td>
-		</tr>
-	{{/each}}
-	</tbody>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Category</th>
+      <th>Created By</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each placemarks}}
+      <tr class="placemark-row" data-id="{{_id}}">
+        <td>
+          {{name}}
+        </td>
+        <td>{{categoryName}}</td>
+        <td>{{userEmail}}</td>
+        <td>
+          <a href="/placemark/{{_id}}" class="ui icon button">
+            <i class="fa-solid fa-circle-info"></i>
+          </a>
+        </td>
+        <td>
+          {{#if isOwner}}
+            <a href="/dashboard/deleteplacemark/{{_id}}" class="ui icon button">
+              <i class="fas fa-trash"></i>
+            </a>
+          {{/if}}
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
 </table>

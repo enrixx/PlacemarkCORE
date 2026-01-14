@@ -8,8 +8,8 @@ export const handlebarsHelpers = {
       const loggedStr = loggedInUser?.toString() || loggedInUser;
       return userStr === loggedStr;
     });
-    Handlebars.registerHelper("ifEq", (a, b, options) => (a === b) ? options.fn(this) : options.inverse(this));
-    Handlebars.registerHelper("ifEquals", (a, b, options) => (a === b) ? options.fn(this) : options.inverse(this));
+    Handlebars.registerHelper("ifEq", (a, b, options) => (a === b ? options.fn(this) : options.inverse(this)));
+    Handlebars.registerHelper("ifEquals", (a, b, options) => (a === b ? options.fn(this) : options.inverse(this)));
     Handlebars.registerHelper("eq", (a, b) => {
       // Convert to strings to handle MongoDB ObjectId comparison
       const aStr = a?.toString() || a;

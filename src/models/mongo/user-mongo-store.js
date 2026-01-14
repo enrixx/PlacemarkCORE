@@ -32,6 +32,13 @@ export const userMongoStore = {
     return User.findOne({ email: email }).lean();
   },
 
+  async getUserByResetToken(token) {
+    return User.findOne({
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: Date.now() },
+    }).lean();
+  },
+
   async deleteUserById(id) {
     try {
       await User.deleteOne({ _id: id });
@@ -57,7 +64,9 @@ export const userMongoStore = {
         user.password = await hashPassword(updatedUser.password);
       }
       if (updatedUser.role) user.role = updatedUser.role;
-      if (typeof updatedUser.isOAuth === 'boolean') user.isOAuth = updatedUser.isOAuth;
+      if (typeof updatedUser.isOAuth === "boolean") user.isOAuth = updatedUser.isOAuth;
+      if (updatedUser.passwordResetToken !== undefined) user.passwordResetToken = updatedUser.passwordResetToken;
+      if (updatedUser.passwordResetExpires !== undefined) user.passwordResetExpires = updatedUser.passwordResetExpires;
       await user.save();
     }
   },

@@ -5,8 +5,8 @@ dotenv.config();
 export const serviceUrl = process.env.SERVICE_URL;
 
 export const adminCredentials = {
-    email: process.env.ADMIN_EMAIL,
-    password: process.env.ADMIN_PASSWORD,
+  email: process.env.ADMIN_EMAIL,
+  password: process.env.ADMIN_PASSWORD,
 };
 export const maggie = {
   firstName: "Maggie",
