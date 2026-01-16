@@ -1,6 +1,5 @@
 import { db } from "../models/db.js";
-import { imageStore } from "../models/image-store.js";
-import { UserSpec } from "../models/joi-schemas.js";
+import { UserSpecForAdminCreate } from "../models/joi-schemas.js";
 
 export const adminController = {
   index: {
@@ -35,7 +34,7 @@ export const adminController = {
 
   createUser: {
     validate: {
-      payload: UserSpec,
+      payload: UserSpecForAdminCreate,
       options: { abortEarly: false },
       failAction: function (request, h, error) {
         const loggedInUser = request.auth.credentials;

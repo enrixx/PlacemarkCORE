@@ -58,6 +58,7 @@ async function init() {
     cookie: {
       name: process.env.COOKIE_NAME,
       password: process.env.COOKIE_PASSWORD,
+      // Cant login over http if secure flag is true, so for local development we set it to false! USE npm run dev! unless for tests
       isSecure: process.env.PRODUCTION === "true",
     },
     redirectTo: "/",

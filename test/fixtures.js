@@ -8,6 +8,7 @@ export const adminCredentials = {
   email: process.env.ADMIN_EMAIL,
   password: process.env.ADMIN_PASSWORD,
 };
+
 export const maggie = {
   firstName: "Maggie",
   lastName: "Simpson",
