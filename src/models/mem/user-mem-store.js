@@ -53,7 +53,16 @@ export const userMemStore = {
       }
       if (updatedUser.role) user.role = updatedUser.role || "user";
       if (typeof updatedUser.isOAuth === "boolean") user.isOAuth = updatedUser.isOAuth;
+
+      if (updatedUser.passwordResetToken !== undefined) user.passwordResetToken = updatedUser.passwordResetToken;
+      if (updatedUser.passwordResetExpires !== undefined) user.passwordResetExpires = updatedUser.passwordResetExpires;
     }
+  },
+
+  async getUserByResetToken(token) {
+    let u = users.find((user) => user.passwordResetToken === token && user.passwordResetExpires > Date.now());
+    if (u === undefined) u = null;
+    return u;
   },
 
   async getAdminCount() {
