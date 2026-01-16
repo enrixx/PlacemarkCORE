@@ -99,6 +99,8 @@ To start the application in production mode, run:
 npm run start
 ```
 
+You wont be able to login with this as npm run start sets the mode to production and cookie is set to true => isSecure: process.env.PRODUCTION === "true"
+
 The application and Admin Dashboard will be available at http://localhost:3000.
 
 ## Running Tests
