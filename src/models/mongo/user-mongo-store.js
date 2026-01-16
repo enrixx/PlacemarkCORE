@@ -29,7 +29,7 @@ export const userMongoStore = {
   },
 
   async getUserByEmail(email) {
-    return User.findOne({ email: email }).lean();
+    return User.findOne({ email: { $regex: new RegExp(`^${email}$`, "i") } }).lean();
   },
 
   async getUserByResetToken(token) {

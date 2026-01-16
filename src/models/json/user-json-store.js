@@ -29,7 +29,7 @@ export const userJsonStore = {
 
   async getUserByEmail(email) {
     await db.read();
-    let u = db.data.users.find((user) => user.email === email);
+    let u = db.data.users.find((user) => user.email.toLowerCase() === email.toLowerCase());
     if (u === undefined) u = null;
     return u;
   },

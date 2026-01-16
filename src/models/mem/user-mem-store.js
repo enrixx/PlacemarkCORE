@@ -26,7 +26,7 @@ export const userMemStore = {
   },
 
   async getUserByEmail(email) {
-    let u = users.find((user) => user.email === email);
+    let u = users.find((user) => user.email.toLowerCase() === email.toLowerCase());
     if (u === undefined) u = null;
     return u;
   },

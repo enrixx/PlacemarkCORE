@@ -49,6 +49,12 @@ suite("User Model tests", () => {
     assert.isNull(deletedUser);
   });
 
+  test("get a user by email - case insensitive", async () => {
+    const user = await db.userStore.addUser(maggie);
+    const returnedUser = await db.userStore.getUserByEmail(user.email.toUpperCase());
+    assert.deepEqual(user, returnedUser);
+  });
+
   test("get a user - failures", async () => {
     const noUserWithId = await db.userStore.getUserById("123");
     assert.isNull(noUserWithId);
