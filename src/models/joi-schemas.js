@@ -79,3 +79,12 @@ export const JwtAuth = Joi.object()
     token: Joi.string().example("eyJhbGciOiJND.g5YmJisIjoiaGYwNTNjAOhE.gCWGmY5-YigQw0DCBo").required(),
   })
   .label("JwtAuth");
+
+export const ForgotPasswordSpec = Joi.object({
+  email: Joi.string().email().example("homer@simpson.com").required(),
+}).label("ForgotPassword");
+
+export const ResetPasswordSpec = Joi.object({
+  token: Joi.string().required().example("g5YmJisIjoiaGYwNTNjAOhE"),
+  password: Joi.string().required().example("secret"),
+}).label("ResetPassword");

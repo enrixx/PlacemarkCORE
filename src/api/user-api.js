@@ -2,7 +2,7 @@ import Boom from "@hapi/boom";
 import Joi from "joi";
 import crypto from "crypto";
 import { db } from "../models/db.js";
-import { IdSpec, JwtAuth, UserArray, UserCredentialsSpec, UserOAuthSpec, UserSpec, UserSpecForAdminCreate, UserSpecPlus } from "../models/joi-schemas.js";
+import { IdSpec, JwtAuth, UserArray, UserCredentialsSpec, UserOAuthSpec, UserSpec, UserSpecForAdminCreate, UserSpecPlus, ForgotPasswordSpec, ResetPasswordSpec } from "../models/joi-schemas.js";
 import { validationError } from "./logger.js";
 import { createToken } from "./jwt-utils.js";
 import { comparePassword } from "../utils/password-utils.js";
@@ -296,9 +296,7 @@ export const userApi = {
     description: "Request Password Reset",
     notes: "Sends password reset email",
     validate: {
-      payload: Joi.object({
-        email: Joi.string().email().required(),
-      }),
+      payload: ForgotPasswordSpec,
       failAction: validationError,
     },
   },
@@ -320,7 +318,7 @@ export const userApi = {
           passwordResetExpires: null,
         });
 
-        return { message: "Password has been reset." };
+        return true;
       } catch (err) {
         return Boom.serverUnavailable("Database Error");
       }
@@ -329,11 +327,9 @@ export const userApi = {
     description: "Reset Password",
     notes: "Resets password using a valid token",
     validate: {
-      payload: Joi.object({
-        token: Joi.string().required(),
-        password: Joi.string().required(),
-      }),
+      payload: ResetPasswordSpec,
       failAction: validationError,
     },
+    response: { schema: Joi.boolean(), failAction: validationError },
   },
 };
